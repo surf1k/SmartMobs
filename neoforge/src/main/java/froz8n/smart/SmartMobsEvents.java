@@ -117,10 +117,11 @@ public final class SmartMobsEvents {
         }
 
         if (zombie.getType() != EntityType.ZOMBIE) return;
-        if (isSmartMobZombie(zombie)) return;
-        float roll = zombie.getRandom().nextFloat();
-        if (roll < .15F) makeGarden(zombie);
-        else if (roll < .50F) makeSmart(zombie);
+        if (isSmartMobZombie(zombie) || ZombieBreeds.isBreed(zombie)) return;
+        double roll = zombie.getRandom().nextDouble();
+        if (roll < froz8n.Config.gardenChance) makeGarden(zombie);
+        else if (roll < froz8n.Config.gardenChance + froz8n.Config.smartChance) makeSmart(zombie);
+        else ZombieBreeds.assign(zombie);
     }
 
     private static void onEntityTick(EntityTickEvent.Post event) {
@@ -147,16 +148,19 @@ public final class SmartMobsEvents {
                 if ((zombie.tickCount + zombie.getId()) % 20 == 0) {
                     var speed=zombie.getAttribute(Attributes.MOVEMENT_SPEED);
                     if(speed!=null) speed.setBaseValue(SmartMobWorldRules.isNightLike(zombie.level())
-                            ?SmartZombieBrain.NIGHT_MOVE_SPEED:SmartZombieBrain.DAY_MOVE_SPEED);
+                            ?SmartZombieBrain.nightMoveSpeed():SmartZombieBrain.dayMoveSpeed());
                 }
             }
             syncSwimmingPose(zombie);
-            if(!zombie.isInLava()&&zombie.getRemainingFireTicks()>0)zombie.clearFire();
+            // Daylight is the player's ally again: only the hat wearers survive it, and
+            // that is plain vanilla behaviour for a mob with a head item.
+            if(froz8n.Config.sunlightImmunity&&!zombie.isInLava()&&zombie.getRemainingFireTicks()>0)zombie.clearFire();
             if(zombie.getPersistentData().getBooleanOr(GARDEN_KEY,false))
                 froz8n.combat.GardenZombieSystem.tickGarden(zombie);
             froz8n.combat.ZombieSerumSystem.tickZombie(zombie);
             froz8n.combat.SoundJammerSystem.tickZombie(zombie);
             if (froz8n.combat.SoundJammerSystem.isControlled(zombie)) return;
+            ZombieBreeds.tick(zombie);
             if(SmartMobWorldRules.tryBreakVisiblePortal(zombie)) return;
             boolean smart = isSmart(zombie);
             if (smart) SmartZombieBrain.tickFallClutch(zombie);
@@ -188,11 +192,29 @@ public final class SmartMobsEvents {
             froz8n.combat.GardenZombieSystem.tickRooted(player);
     }
 
-    /** The three damage suppressors Forge registered separately on LivingHurtEvent. */
+    /** Damage suppressors plus the two breed reactions, all on one hook. */
     private static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        froz8n.combat.SoundJammerSystem.suppressFearedAttack(event);
-        froz8n.combat.ZombieSerumSystem.preventAttack(event);
-        froz8n.combat.GardenZombieSystem.suppressChargeAttack(event);
+        if (froz8n.combat.SoundJammerSystem.suppressFearedAttack(event.getSource())) event.setAmount(0);
+        if (froz8n.combat.ZombieSerumSystem.preventAttack(event.getEntity(), event.getSource())) {
+            event.setCanceled(true);
+            return;
+        }
+        if (froz8n.combat.GardenZombieSystem.suppressChargeAttack(event.getSource())) {
+            event.setCanceled(true);
+            return;
+        }
+        // A thief robs the player it just hit, a sapper goes off on the blow that kills it.
+        if (event.getEntity() instanceof net.minecraft.world.entity.player.Player victim
+                && event.getSource().getEntity() instanceof Zombie attacker) {
+            ZombieBreeds.onZombieHitPlayer(attacker, victim);
+            if (ZombieBreeds.isFleeing(attacker)) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+        if (event.getEntity() instanceof Zombie hurt) {
+            ZombieBreeds.onZombieDamaged(hurt, event.getSource(), event.getAmount());
+        }
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {

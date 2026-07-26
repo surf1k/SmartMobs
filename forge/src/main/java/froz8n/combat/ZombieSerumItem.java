@@ -25,7 +25,7 @@ public final class ZombieSerumItem extends Item {
         if(entity instanceof Player player){
             if(!level.isClientSide()){
                 ZombieSerumSystem.apply(player);
-                player.addEffect(new MobEffectInstance(froz8n.smartmobs.ZOMBIE_DISGUISE.getHolder().orElseThrow(),300,0,false,true,true));
+                player.addEffect(new MobEffectInstance(froz8n.SmartMobs.ZOMBIE_DISGUISE.getHolder().orElseThrow(),300,0,false,true,true));
                 player.addEffect(new MobEffectInstance(MobEffects.HUNGER,300,0,false,true,true));
                 player.addEffect(new MobEffectInstance(MobEffects.NAUSEA,60,0,false,true,true));
             }

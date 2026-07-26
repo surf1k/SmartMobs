@@ -1,6 +1,6 @@
 package froz8n.client;
 
-import froz8n.smartmobs;
+import froz8n.SmartMobs;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -17,7 +17,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 /** Exact wearable geometry used by mining_helmet 2.1.2, adapted for SmartMobs. */
 public final class MiningHelmetModel<T extends HumanoidRenderState> extends HumanoidModel<T> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(smartmobs.MODID, "mining_helmet"), "main");
+            Identifier.fromNamespaceAndPath(SmartMobs.MODID, "mining_helmet"), "main");
 
     public MiningHelmetModel(ModelPart root) {
         super(root);

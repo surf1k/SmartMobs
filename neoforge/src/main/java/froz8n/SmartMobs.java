@@ -138,15 +138,9 @@ public final class SmartMobs {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-        LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+        LOGGER.info("SmartMobs ready: miners {}%, garden {}%, breeds {}",
+                Math.round(Config.smartChance * 100), Math.round(Config.gardenChance * 100),
+                Config.enableBreeds ? Math.round(Config.breedChance * 100) + "%" : "off");
     }
 
     public void onServerStarting(ServerStartingEvent event) {
@@ -163,4 +157,18 @@ public final class SmartMobs {
     private static ResourceKey<Item> itemKey(String path) {
         return ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MODID, path));
     }
+
+    // The gameplay code is shared verbatim with the Fabric tree, where these are plain
+    // objects; going through accessors keeps that code identical everywhere.
+    public static net.minecraft.world.item.Item miningHelmet() { return MINING_HELMET.get(); }
+
+    public static net.minecraft.world.item.Item gardenHat() { return GARDEN_HAT.get(); }
+
+    public static net.minecraft.world.item.Item cardboardBox() { return CARDBOARD_BOX.get(); }
+
+    public static net.minecraft.world.item.Item soundJammer() { return SOUND_JAMMER.get(); }
+
+    public static net.minecraft.world.level.block.Block graspingRoots() { return GRASPING_ROOTS.get(); }
+
+    public static net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> zombieDisguise() { return ZOMBIE_DISGUISE; }
 }

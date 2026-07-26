@@ -40,10 +40,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class SmartZombieBrain {
 
-    private static final double FOLLOW_RANGE = 128.0;   // detection radius (blocks)
+    /** Detection radius in blocks. Configurable; the old hard-coded 128 saw across a whole map. */
+    private static double followRange() { return froz8n.Config.detectionRange; }
     private static final double SPEED = 1.25;
-    public static final double DAY_MOVE_SPEED = 0.3100;    // player sprint pace x 1.10
-    public static final double NIGHT_MOVE_SPEED = 0.4090;  // player sprint pace x 1.45
+    /** Vanilla zombies walk at 0.23 and a sprinting player moves at roughly 0.28. */
+    public static double dayMoveSpeed() { return froz8n.Config.dayMoveSpeed; }
+    public static double nightMoveSpeed() { return froz8n.Config.nightMoveSpeed; }
     private static final int SWING_INTERVAL = 5;
     private static final float IRON_HARDNESS = 3.0F;
     private static final double DIG_REACH = 4.5;
@@ -138,7 +140,7 @@ public final class SmartZombieBrain {
         // player for every miner on every server tick.
         Player target = z.getTarget() instanceof Player p && p.isAlive() && !p.isSpectator()
                 && !froz8n.combat.ZombieSerumSystem.isMasked(p)
-                && z.distanceToSqr(p) <= FOLLOW_RANGE * FOLLOW_RANGE ? p : findTarget(level, z);
+                && z.distanceToSqr(p) <= followRange() * followRange() ? p : findTarget(level, z);
         if (target == null) {
             BrainState old = STATES.get(z.getUUID());
             if (old != null) {
@@ -861,12 +863,9 @@ public final class SmartZombieBrain {
             z.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
             return;
         }
+        // A plain iron pickaxe. The old Efficiency V one chewed through stone almost
+        // instantly, which is what made a wall pointless.
         ItemStack tool=new ItemStack(Items.IRON_PICKAXE);
-        try{
-            var ench=level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
-                    .getOrThrow(net.minecraft.world.item.enchantment.Enchantments.EFFICIENCY);
-            tool.enchant(ench,5);
-        }catch(Exception ignored){}
         z.setItemSlot(EquipmentSlot.MAINHAND,tool);
         z.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
         st.holdingPick = true;
@@ -959,7 +958,7 @@ public final class SmartZombieBrain {
 
     private static Player findTarget(ServerLevel level, Zombie z) {
         Player best = null;
-        double bestSq = FOLLOW_RANGE * FOLLOW_RANGE;
+        double bestSq = followRange() * followRange();
         for (Player p : level.players()) {
             if (!p.isAlive() || p.isSpectator() || p.isCreative()
                     || froz8n.combat.ZombieSerumSystem.isMasked(p)) {
@@ -997,9 +996,13 @@ public final class SmartZombieBrain {
     }
 
     private static boolean isBreakable(ServerLevel level, BlockPos pos) {
+        if (!froz8n.Config.allowDigging) return false;
         BlockState s = level.getBlockState(pos);
+        float hardness = s.getDestroySpeed(level, pos);
+        // Anything tougher than the configured cap is simply out of reach: an obsidian
+        // or deepslate-brick shell now actually keeps them out.
         return !s.isAir() && s.getFluidState().isEmpty()
-                && s.getDestroySpeed(level, pos) >= 0.0F && s.blocksMotion();
+                && hardness >= 0.0F && hardness <= froz8n.Config.maxDigHardness && s.blocksMotion();
     }
 
     private static double horizTo(Zombie z, BlockPos pos) {

@@ -51,12 +51,7 @@ public final class SmartMobsEvents {
         // Predicate listener: returning true cancels the join so the entity is never added.
         EntityJoinLevelEvent.BUS.addListener(SmartMobsEvents::onEntityJoinLevel);
         LivingEvent.LivingTickEvent.BUS.addListener(SmartMobsEvents::onLivingTick);
-        net.minecraftforge.event.entity.living.LivingHurtEvent.BUS.addListener(
-                froz8n.combat.SoundJammerSystem::suppressFearedAttack);
-        net.minecraftforge.event.entity.living.LivingHurtEvent.BUS.addListener(
-                froz8n.combat.ZombieSerumSystem::preventAttack);
-        net.minecraftforge.event.entity.living.LivingHurtEvent.BUS.addListener(
-                froz8n.combat.GardenZombieSystem::suppressChargeAttack);
+        net.minecraftforge.event.entity.living.LivingHurtEvent.BUS.addListener(SmartMobsEvents::onLivingHurt);
         TickEvent.ServerTickEvent.Post.BUS.addListener(SmartMobsEvents::onServerTick);
         // BreakEvent is cancellable: a Predicate listener returning true cancels the event.
         BlockEvent.BreakEvent.BUS.addListener(SmartMobsEvents::onBlockBreak);
@@ -94,7 +89,7 @@ public final class SmartMobsEvents {
     private static void makeSmart(Zombie zombie) {
         zombie.getPersistentData().putBoolean(SMART_KEY, true);
         zombie.setPersistenceRequired();
-        zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(froz8n.smartmobs.MINING_HELMET.get()));
+        zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(froz8n.SmartMobs.MINING_HELMET.get()));
         damageHat(zombie.getItemBySlot(EquipmentSlot.HEAD),zombie);
         zombie.setDropChance(EquipmentSlot.HEAD, 0.05F);
     }
@@ -102,7 +97,7 @@ public final class SmartMobsEvents {
     private static void makeGarden(Zombie zombie){
         zombie.getPersistentData().putBoolean(GARDEN_KEY,true);
         zombie.setPersistenceRequired();
-        zombie.setItemSlot(EquipmentSlot.HEAD,new ItemStack(froz8n.smartmobs.GARDEN_HAT.get()));
+        zombie.setItemSlot(EquipmentSlot.HEAD,new ItemStack(froz8n.SmartMobs.GARDEN_HAT.get()));
         damageHat(zombie.getItemBySlot(EquipmentSlot.HEAD),zombie);
         zombie.setDropChance(EquipmentSlot.HEAD,.05F);
     }
@@ -128,10 +123,11 @@ public final class SmartMobsEvents {
         }
 
         if (zombie.getType() != EntityType.ZOMBIE) return false;
-        if (isSmartMobZombie(zombie)) return false;
-        float roll = zombie.getRandom().nextFloat();
-        if (roll < .15F) makeGarden(zombie);
-        else if (roll < .50F) makeSmart(zombie);
+        if (isSmartMobZombie(zombie) || ZombieBreeds.isBreed(zombie)) return false;
+        double roll = zombie.getRandom().nextDouble();
+        if (roll < froz8n.Config.gardenChance) makeGarden(zombie);
+        else if (roll < froz8n.Config.gardenChance + froz8n.Config.smartChance) makeSmart(zombie);
+        else ZombieBreeds.assign(zombie);
         return false;
     }
 
@@ -159,16 +155,17 @@ public final class SmartMobsEvents {
                 if ((zombie.tickCount + zombie.getId()) % 20 == 0) {
                     var speed=zombie.getAttribute(Attributes.MOVEMENT_SPEED);
                     if(speed!=null) speed.setBaseValue(SmartMobWorldRules.isNightLike(zombie.level())
-                            ?SmartZombieBrain.NIGHT_MOVE_SPEED:SmartZombieBrain.DAY_MOVE_SPEED);
+                            ?SmartZombieBrain.nightMoveSpeed():SmartZombieBrain.dayMoveSpeed());
                 }
             }
             syncSwimmingPose(zombie);
-            if(!zombie.isInLava()&&zombie.getRemainingFireTicks()>0)zombie.clearFire();
+            if(froz8n.Config.sunlightImmunity&&!zombie.isInLava()&&zombie.getRemainingFireTicks()>0)zombie.clearFire();
             if(zombie.getPersistentData().getBooleanOr(GARDEN_KEY,false))
                 froz8n.combat.GardenZombieSystem.tickGarden(zombie);
             froz8n.combat.ZombieSerumSystem.tickZombie(zombie);
             froz8n.combat.SoundJammerSystem.tickZombie(zombie);
             if (froz8n.combat.SoundJammerSystem.isControlled(zombie)) return;
+            ZombieBreeds.tick(zombie);
             if(SmartMobWorldRules.tryBreakVisiblePortal(zombie)) return;
             boolean smart = isSmart(zombie);
             if (smart) SmartZombieBrain.tickFallClutch(zombie);
@@ -182,8 +179,8 @@ public final class SmartMobsEvents {
             // 20 times per second for every mob. Stagger it across a 2-second window.
             if ((zombie.tickCount + zombie.getId()) % 40 == 0) {
                 zombie.setPersistenceRequired();
-                if (!zombie.getItemBySlot(EquipmentSlot.HEAD).is(froz8n.smartmobs.MINING_HELMET.get())) {
-                    zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(froz8n.smartmobs.MINING_HELMET.get()));
+                if (!zombie.getItemBySlot(EquipmentSlot.HEAD).is(froz8n.SmartMobs.MINING_HELMET.get())) {
+                    zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(froz8n.SmartMobs.MINING_HELMET.get()));
                 }
                 zombie.setDropChance(EquipmentSlot.HEAD, 0.05F);
             }
@@ -198,6 +195,27 @@ public final class SmartMobsEvents {
         }
         if(entity instanceof net.minecraft.world.entity.player.Player player)
             froz8n.combat.GardenZombieSystem.tickRooted(player);
+    }
+
+    /**
+     * Damage suppressors plus the two breed reactions, all on one hook.
+     *
+     * @return {@code true} to cancel the hit (EventBus 7 cancellation contract).
+     */
+    private static boolean onLivingHurt(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
+        if (froz8n.combat.SoundJammerSystem.suppressFearedAttack(event.getSource())) event.setAmount(0);
+        if (froz8n.combat.ZombieSerumSystem.preventAttack(event.getEntity(), event.getSource())) return true;
+        if (froz8n.combat.GardenZombieSystem.suppressChargeAttack(event.getSource())) return true;
+        // A thief robs the player it just hit, a sapper goes off on the blow that kills it.
+        if (event.getEntity() instanceof net.minecraft.world.entity.player.Player victim
+                && event.getSource().getEntity() instanceof Zombie attacker) {
+            ZombieBreeds.onZombieHitPlayer(attacker, victim);
+            if (ZombieBreeds.isFleeing(attacker)) return true;
+        }
+        if (event.getEntity() instanceof Zombie hurt) {
+            ZombieBreeds.onZombieDamaged(hurt, event.getSource(), event.getAmount());
+        }
+        return false;
     }
 
     private static void onServerTick(TickEvent.ServerTickEvent.Post event) {
@@ -241,7 +259,7 @@ public final class SmartMobsEvents {
             zombie.getPersistentData().remove(LEGACY_BOX_KEY);
             zombie.getPersistentData().remove(LEGACY_BOX_SHIELD_KEY);
         }
-        if (zombie.getItemBySlot(EquipmentSlot.HEAD).is(froz8n.smartmobs.CARDBOARD_BOX.get())) {
+        if (zombie.getItemBySlot(EquipmentSlot.HEAD).is(froz8n.SmartMobs.CARDBOARD_BOX.get())) {
             zombie.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
             zombie.setDropChance(EquipmentSlot.HEAD, 0.0F);
         }

@@ -25,8 +25,8 @@ public final class JammerHud {
         for(int sy=y+3;sy<y+ph-2;sy+=4)g.fill(x+1,sy,x+pw-1,sy+1,0x1600FF55);
         g.drawString(mc.font,Component.literal("SM-JAMMER // SYS.R2"),x+7,y+6,0xFF7CFF9D,false);
         g.drawString(mc.font,Component.literal("SHIFT + MWHEEL : SELECT"),x+7,y+17,0xFF527C5E,false);
-        drawMode(g,mc,x+6,y+29,pw-12,0,downReady,30_000L,0xFF55F58A,"[01] STUN");
-        drawMode(g,mc,x+6,y+51,pw-12,1,upReady,45_000L,0xFFFFC65C,"[02] PANIC");
+        drawMode(g,mc,x+6,y+29,pw-12,0,downReady,20_000L,0xFF55F58A,"[01] STUN");
+        drawMode(g,mc,x+6,y+51,pw-12,1,upReady,30_000L,0xFFFFC65C,"[02] PANIC");
     }
     private static void drawMode(GuiGraphics g,Minecraft mc,int x,int y,int width,int thisMode,long ready,long total,int accent,String title){
         boolean selected=mode==thisMode;long now=System.currentTimeMillis();

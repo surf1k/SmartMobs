@@ -32,6 +32,7 @@ public final class SmartMobWorldRules {
     }
 
     public static boolean tryBreakVisiblePortal(Zombie zombie) {
+        if (!froz8n.Config.breakPortals) return false;
         if (!(zombie.level() instanceof ServerLevel level)
                 || !SmartMobsEvents.isSmartMobZombie(zombie)
                 || (zombie.tickCount + zombie.getId()) % PORTAL_SCAN_INTERVAL != 0) {

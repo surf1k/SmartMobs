@@ -40,8 +40,8 @@ import org.slf4j.Logger;
 import java.util.Map;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(smartmobs.MODID)
-public class smartmobs {
+@Mod(SmartMobs.MODID)
+public final class SmartMobs {
 
     // Define mod id in a common place for everything to reference
     public static final String MODID = "smartmobs";
@@ -115,13 +115,13 @@ public class smartmobs {
                 output.accept(CARDBOARD_BOX.get());
             }).build());
 
-    public smartmobs(FMLJavaModLoadingContext context) {
+    public SmartMobs(FMLJavaModLoadingContext context) {
         // In EventBus 7 the mod bus is addressed through a BusGroup rather than an IEventBus.
         BusGroup modBusGroup = context.getModBusGroup();
 
         // Register the mod-lifecycle listeners (mod-bus events -> obtained via getBus(group)).
         FMLCommonSetupEvent.getBus(modBusGroup).addListener(this::commonSetup);
-        FMLClientSetupEvent.getBus(modBusGroup).addListener(smartmobs::onClientSetup);
+        FMLClientSetupEvent.getBus(modBusGroup).addListener(SmartMobs::onClientSetup);
         EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
                 .addListener(froz8n.client.MiningHelmetModel::registerLayer);
         EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
@@ -129,7 +129,7 @@ public class smartmobs {
         EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
                 .addListener(froz8n.client.CardboardBoxModel::registerLayer);
         EntityRenderersEvent.RegisterRenderers.getBus(modBusGroup)
-                .addListener(smartmobs::registerEntityRenderers);
+                .addListener(SmartMobs::registerEntityRenderers);
         net.minecraftforge.client.event.AddGuiOverlayLayersEvent.getBus(modBusGroup)
                 .addListener(froz8n.client.JammerHud::addLayer);
         net.minecraftforge.client.event.RegisterKeyMappingsEvent.getBus(modBusGroup)
@@ -157,15 +157,9 @@ public class smartmobs {
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(froz8n.combat.SoundWaveNetwork::register);
         // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-        LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
-
-        if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+        LOGGER.info("SmartMobs ready: miners {}%, garden {}%, breeds {}",
+                Math.round(Config.smartChance * 100), Math.round(Config.gardenChance * 100),
+                Config.enableBreeds ? Math.round(Config.breedChance * 100) + "%" : "off");
     }
 
     // Add the example block item to the building blocks tab
@@ -203,4 +197,18 @@ public class smartmobs {
     private static ResourceKey<Item> itemKey(String path) {
         return ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MODID, path));
     }
+
+    // The gameplay code is shared verbatim with the Fabric tree, where these are plain
+    // objects; going through accessors keeps that code identical everywhere.
+    public static net.minecraft.world.item.Item miningHelmet() { return MINING_HELMET.get(); }
+
+    public static net.minecraft.world.item.Item gardenHat() { return GARDEN_HAT.get(); }
+
+    public static net.minecraft.world.item.Item cardboardBox() { return CARDBOARD_BOX.get(); }
+
+    public static net.minecraft.world.item.Item soundJammer() { return SOUND_JAMMER.get(); }
+
+    public static net.minecraft.world.level.block.Block graspingRoots() { return GRASPING_ROOTS.get(); }
+
+    public static net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> zombieDisguise() { return ZOMBIE_DISGUISE.getHolder().orElseThrow(); }
 }

@@ -1,7 +1,13 @@
 # SmartMobs
 
-Zombies that plan a route, mine through walls, pillar, bridge, parkour and hunt in packs — plus three items
-to fight back with. Minecraft **1.21.11**, built for every current loader from one shared design.
+Zombies that plan a route, mine through walls, pillar, bridge, parkour and hunt in packs, six lesser breeds
+that make an ordinary night interesting — plus three items to fight back with. Minecraft **1.21.11**, built
+for every current loader from one shared design.
+
+Difficulty is tuned to be survivable and every number is config: miners are 12% of spawns (was 35%), they
+carry a plain pickaxe instead of an Efficiency V one, cannot mine anything harder than the configured cap,
+notice you at 32 blocks instead of 128, no longer ignore daylight and no longer break nether portals unless
+you turn that back on.
 
 ![icon](branding/icon.png)
 
@@ -33,6 +39,12 @@ Each folder is a standalone Gradle project with its own wrapper. The gameplay co
 | HUD | `HudElementRegistry` | `RegisterGuiLayersEvent` / `AddGuiOverlayLayersEvent` |
 | Nether spawns | `BiomeModifications.addSpawn` | `neoforge:add_spawns` / `forge:add_spawns` JSON |
 | Widened access | `smartmobs.accesswidener` | `META-INF/accesstransformer.cfg` |
+| Config | JSON via Gson | `ModConfigSpec` / `ForgeConfigSpec` |
+
+`froz8n.smart` and `froz8n.combat` are now byte-identical across the trees: item lookups go through
+`SmartMobs.miningHelmet()`-style accessors and the per-entity tag through `froz8n.data.PersistentData`, so
+only the loader-facing edges (entrypoint, event wiring, config backend, client registration) differ. That is
+what makes porting to another Minecraft version a matter of fixing the edges rather than the gameplay.
 
 ### Why `quilt/` has no sources of its own
 

@@ -1,8 +1,10 @@
 package froz8n.combat;
 
+import froz8n.data.PersistentData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
@@ -40,9 +42,9 @@ public final class SoundJammerSystem {
         AABB area=player.getBoundingBox().inflate(10.0);
         for(Zombie zombie:level.getEntitiesOfClass(Zombie.class,area,
                 z->z.isAlive()&&z.distanceToSqr(player)<=100.0)){
-            zombie.getPersistentData().putLong(FEAR_UNTIL,until);
-            zombie.getPersistentData().putDouble(FEAR_X,player.getX());
-            zombie.getPersistentData().putDouble(FEAR_Z,player.getZ());
+            PersistentData.of(zombie).putLong(FEAR_UNTIL,until);
+            PersistentData.of(zombie).putDouble(FEAR_X,player.getX());
+            PersistentData.of(zombie).putDouble(FEAR_Z,player.getZ());
             zombie.setTarget(null);
         }
     }
@@ -64,8 +66,8 @@ public final class SoundJammerSystem {
             AABB area = player.getBoundingBox().inflate(RADIUS);
             for (Zombie zombie : level.getEntitiesOfClass(Zombie.class, area,
                     z -> z.isAlive() && z.distanceToSqr(player) <= RADIUS * RADIUS)) {
-                zombie.getPersistentData().putLong(STUN_UNTIL, stunUntil);
-                zombie.getPersistentData().putBoolean(FORCED, true);
+                PersistentData.of(zombie).putLong(STUN_UNTIL, stunUntil);
+                PersistentData.of(zombie).putBoolean(FORCED, true);
             }
         }
     }
@@ -83,17 +85,18 @@ public final class SoundJammerSystem {
     }
 
     public static boolean isStunned(Zombie zombie) {
-        return zombie.getPersistentData().getLongOr(STUN_UNTIL, 0L) > zombie.level().getGameTime();
+        return PersistentData.of(zombie).getLongOr(STUN_UNTIL, 0L) > zombie.level().getGameTime();
     }
-    public static boolean isFeared(Zombie zombie){return zombie.getPersistentData().getLongOr(FEAR_UNTIL,0)>zombie.level().getGameTime();}
+    public static boolean isFeared(Zombie zombie){return PersistentData.of(zombie).getLongOr(FEAR_UNTIL,0)>zombie.level().getGameTime();}
     public static boolean isControlled(Zombie zombie){return isStunned(zombie)||isFeared(zombie);}
-    public static void suppressFearedAttack(net.minecraftforge.event.entity.living.LivingHurtEvent event){
-        if(event.getSource().getEntity() instanceof Zombie z&&isFeared(z))event.setAmount(0);
+    /** @return {@code true} when a panicking zombie is the attacker, so the hit deals nothing. */
+    public static boolean suppressFearedAttack(DamageSource source){
+        return source.getEntity() instanceof Zombie z&&isFeared(z);
     }
 
     public static void tickZombie(Zombie zombie) {
         boolean stunned = isStunned(zombie);
-        boolean forced = zombie.getPersistentData().getBooleanOr(FORCED, false);
+        boolean forced = PersistentData.of(zombie).getBooleanOr(FORCED, false);
         if (stunned) {
             zombie.setTarget(null);
             zombie.getNavigation().stop();
@@ -106,8 +109,8 @@ public final class SoundJammerSystem {
             zombie.setNoAi(false);
             zombie.setNoGravity(false);
             zombie.noPhysics = false;
-            zombie.getPersistentData().remove(FORCED);
-            zombie.getPersistentData().remove(STUN_UNTIL);
+            PersistentData.of(zombie).remove(FORCED);
+            PersistentData.of(zombie).remove(STUN_UNTIL);
         }
         if(isFeared(zombie)){
             zombie.setTarget(null);
@@ -115,8 +118,8 @@ public final class SoundJammerSystem {
             zombie.setNoGravity(false);
             zombie.noPhysics=false;
             if((zombie.tickCount+zombie.getId())%8==0||zombie.getNavigation().isDone()){
-                double fx=zombie.getPersistentData().getDoubleOr(FEAR_X,zombie.getX());
-                double fz=zombie.getPersistentData().getDoubleOr(FEAR_Z,zombie.getZ());
+                double fx=PersistentData.of(zombie).getDoubleOr(FEAR_X,zombie.getX());
+                double fz=PersistentData.of(zombie).getDoubleOr(FEAR_Z,zombie.getZ());
                 double dx=zombie.getX()-fx,dz=zombie.getZ()-fz,len=Math.max(.01,Math.sqrt(dx*dx+dz*dz));
                 zombie.getNavigation().moveTo(zombie.getX()+dx/len*14,zombie.getY(),zombie.getZ()+dz/len*14,1.35);
             }

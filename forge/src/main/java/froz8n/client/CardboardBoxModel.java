@@ -1,6 +1,6 @@
 package froz8n.client;
 
-import froz8n.smartmobs;
+import froz8n.SmartMobs;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
@@ -11,7 +11,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 /** Native 1.21 humanoid adaptation of Somies' OptiFine cardboard-box model. */
 public final class CardboardBoxModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(smartmobs.MODID,"cardboard_box"),"main");
+            Identifier.fromNamespaceAndPath(SmartMobs.MODID,"cardboard_box"),"main");
     public CardboardBoxModel(ModelPart root){super(root);setAllVisible(false);head.visible=true;}
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){event.registerLayerDefinition(LAYER,CardboardBoxModel::layer);}
     private static LayerDefinition layer(){

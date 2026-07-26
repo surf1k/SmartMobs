@@ -39,15 +39,15 @@ public final class GardenZombieSystem {
         if(!(zombie.level() instanceof ServerLevel level))return;
         maintainHat(zombie);
 
-        // Garden zombies sense players in a 128 block sphere even through walls.
-        // The two active skills below still retain their own strict LOS checks.
+        // Garden zombies sense players through walls, but only inside the configured
+        // detection radius - the old 128-block sphere meant they always knew where you were.
         if((zombie.tickCount+zombie.getId())%10==0){
             Player sensed=nearest(level,zombie);
             if(sensed!=null&&!ZombieSerumSystem.isMasked(sensed))zombie.setTarget(sensed);
         }
         if((zombie.tickCount+zombie.getId())%40==0){
             var follow=zombie.getAttribute(Attributes.FOLLOW_RANGE);
-            if(follow!=null)follow.setBaseValue(128);
+            if(follow!=null)follow.setBaseValue(froz8n.Config.detectionRange);
         }
 
         if(zombie.isPassenger())return;
@@ -70,7 +70,7 @@ public final class GardenZombieSystem {
         double distance=zombie.distanceTo(player);
         double previous=PersistentData.of(zombie).getDoubleOr(LAST_DISTANCE,distance);
         PersistentData.of(zombie).putDouble(LAST_DISTANCE,distance);
-        if(distance<=30&&distance>=4&&level.getGameTime()>=PersistentData.of(zombie).getLongOr(CHARGE_COOLDOWN,0)
+        if(distance<=20&&distance>=6&&level.getGameTime()>=PersistentData.of(zombie).getLongOr(CHARGE_COOLDOWN,0)
                 &&froz8n.smart.SmartMobWorldRules.canUseOutdoorNightBehavior(level,zombie.blockPosition().above())&&player.onGround()
                 &&strictLineOfSight(level,zombie,player)){
             startCharge(level,zombie,player);
@@ -93,15 +93,16 @@ public final class GardenZombieSystem {
         horse.setPersistenceRequired();
         horse.setItemSlot(EquipmentSlot.SADDLE,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SADDLE));
         var movement=horse.getAttribute(Attributes.MOVEMENT_SPEED);
-        if(movement!=null)movement.setBaseValue(.45);
+        if(movement!=null)movement.setBaseValue(.34);
         var step=horse.getAttribute(Attributes.STEP_HEIGHT);
-        if(step!=null)step.setBaseValue(1.15);
+        if(step!=null)step.setBaseValue(1.0);
         var health=horse.getAttribute(Attributes.MAX_HEALTH);
-        if(health!=null){health.setBaseValue(60);horse.setHealth(60);}
+        if(health!=null){health.setBaseValue(30);horse.setHealth(30);}
         level.addFreshEntity(horse);
         zombie.startRiding(horse,true,true);
         long now=level.getGameTime();
-        PersistentData.of(zombie).putLong(CHARGE_COOLDOWN,now+600);
+        // A minute between charges, not thirty seconds.
+        PersistentData.of(zombie).putLong(CHARGE_COOLDOWN,now+1200);
         CHARGES.put(horse.getUUID(),new Charge(horse,zombie.getUUID(),player.getUUID(),now+100));
         level.playSound(null,horse.blockPosition(),SoundEvents.HORSE_SADDLE.value(),SoundSource.HOSTILE,1.4F,.85F);
         level.sendParticles(ParticleTypes.CLOUD,horse.getX(),horse.getY()+.2,horse.getZ(),18,.5,.15,.5,.05);
@@ -173,6 +174,8 @@ public final class GardenZombieSystem {
             float hardness=state.getDestroySpeed(level,pos);
             if(pos.getY()==floor&&!level.getBlockState(pos.above()).blocksMotion())continue;
             if(state.isAir()||!state.getFluidState().isEmpty()||!state.blocksMotion()||hardness<0||state.hasBlockEntity())continue;
+            // Only flimsy stuff gets flattened - glass, leaves, fences. A house survives a charge.
+            if(hardness>.6F)continue;
             level.destroyBlock(pos,false,horse,512);
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK,state),
                     pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5,8,.3,.3,.3,.08);
@@ -183,15 +186,16 @@ public final class GardenZombieSystem {
         if(!player.onGround()||!strictLineOfSight(level,zombie,player))return;
         BlockPos ground=player.blockPosition().below();
         if(!level.getBlockState(ground).is(net.minecraft.tags.BlockTags.DIRT))return;
-        long until=level.getGameTime()+60;
+        // A second and a half of being held, then a long wait before it can happen again.
+        long until=level.getGameTime()+30;
         PersistentData.of(player).putLong(ROOT_UNTIL,until);
-        PersistentData.of(zombie).putLong(COOLDOWN,until+600+zombie.getRandom().nextInt(301));
-        if(player instanceof ServerPlayer sp)SoundWaveNetwork.sendRooted(sp,60);
+        PersistentData.of(zombie).putLong(COOLDOWN,until+900+zombie.getRandom().nextInt(301));
+        if(player instanceof ServerPlayer sp)SoundWaveNetwork.sendRooted(sp,30);
         level.playSound(null,ground,SoundEvents.ROOTED_DIRT_BREAK,SoundSource.HOSTILE,1.35F,.62F);
         level.playSound(null,ground,SoundEvents.MANGROVE_ROOTS_BREAK,SoundSource.HOSTILE,.9F,.78F);
         level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK,level.getBlockState(ground)),
                 player.getX(),player.getY()+.03,player.getZ(),32,.7,.04,.7,.075);
-        SoundWaveNetwork.sendRootBurst(level,player.getId(),player.getX(),player.getY(),player.getZ(),level.random.nextLong(),60);
+        SoundWaveNetwork.sendRootBurst(level,player.getId(),player.getX(),player.getY(),player.getZ(),level.random.nextLong(),30);
     }
 
     public static void tickRooted(Player player){
@@ -210,13 +214,13 @@ public final class GardenZombieSystem {
 
     private static void maintainHat(Zombie zombie){
         if((zombie.tickCount+zombie.getId())%40==0
-                &&!zombie.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).is(SmartMobs.GARDEN_HAT)){
-            zombie.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,new net.minecraft.world.item.ItemStack(SmartMobs.GARDEN_HAT));
+                &&!zombie.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).is(SmartMobs.gardenHat())){
+            zombie.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,new net.minecraft.world.item.ItemStack(SmartMobs.gardenHat()));
             zombie.setDropChance(net.minecraft.world.entity.EquipmentSlot.HEAD,.05F);
         }
     }
     private static Player nearest(ServerLevel level,Zombie zombie){
-        Player best=null;double d=128D*128D;
+        Player best=null;double d=(double)froz8n.Config.detectionRange*froz8n.Config.detectionRange;
         for(Player p:level.players())if(p.isAlive()&&!p.isSpectator()&&!p.isCreative()){
             double q=zombie.distanceToSqr(p);if(q<d){d=q;best=p;}
         }return best;

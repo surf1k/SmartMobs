@@ -43,7 +43,7 @@ public final class SoundJammerItem extends Item {
                     mode==0?SoundEvents.WARDEN_SONIC_BOOM:SoundEvents.RAVAGER_ROAR,
                     SoundSource.PLAYERS, mode==0?1.4F:1.1F, mode==0?0.72F:0.58F);
             PersistentData.of(player).putLong(cooldownKey,
-                    System.currentTimeMillis() + (mode==0?30_000L:45_000L));
+                    System.currentTimeMillis() + (mode==0?20_000L:30_000L));
             SoundWaveNetwork.sendStatus(player);
         }
         player.swing(hand);

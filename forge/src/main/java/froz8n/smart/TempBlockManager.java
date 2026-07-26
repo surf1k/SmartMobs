@@ -12,8 +12,8 @@ import java.util.List;
  * temporary: they are automatically removed after {@link #LIFETIME} ticks and,
  * when broken by anyone before that, they drop nothing.
  *
- * All access happens on the server thread (from Forge events), so a plain list
- * is enough.
+ * All access happens on the server thread (from the tick and block-break handlers),
+ * so a plain list is enough.
  */
 public final class TempBlockManager {
 

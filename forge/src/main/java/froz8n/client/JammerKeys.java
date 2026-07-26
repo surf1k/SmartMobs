@@ -21,16 +21,16 @@ public final class JammerKeys {
         boolean shift=com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow(),org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
                 ||com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow(),org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
         if(mc.player==null||!shift
-                ||(!mc.player.getMainHandItem().is(froz8n.smartmobs.SOUND_JAMMER.get())
-                &&!mc.player.getOffhandItem().is(froz8n.smartmobs.SOUND_JAMMER.get())))return false;
+                ||(!mc.player.getMainHandItem().is(froz8n.SmartMobs.SOUND_JAMMER.get())
+                &&!mc.player.getOffhandItem().is(froz8n.SmartMobs.SOUND_JAMMER.get())))return false;
         int mode=event.getDeltaY()>0?0:1;
         JammerHud.selectLocal(mode);froz8n.combat.SoundWaveNetwork.setMode(mode);
         return true;
     }
     private static void onKey(InputEvent.Key e){
         var mc=net.minecraft.client.Minecraft.getInstance();
-        if(mc.player==null||(!mc.player.getMainHandItem().is(froz8n.smartmobs.SOUND_JAMMER.get())
-                &&!mc.player.getOffhandItem().is(froz8n.smartmobs.SOUND_JAMMER.get())))return;
+        if(mc.player==null||(!mc.player.getMainHandItem().is(froz8n.SmartMobs.SOUND_JAMMER.get())
+                &&!mc.player.getOffhandItem().is(froz8n.SmartMobs.SOUND_JAMMER.get())))return;
         if(DOWN.consumeClick()){JammerHud.selectLocal(1);froz8n.combat.SoundWaveNetwork.setMode(1);}
         if(UP.consumeClick()){JammerHud.selectLocal(0);froz8n.combat.SoundWaveNetwork.setMode(0);}
     }

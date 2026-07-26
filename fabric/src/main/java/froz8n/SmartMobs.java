@@ -126,23 +126,28 @@ public final class SmartMobs implements ModInitializer {
         // Register the SmartMobs gameplay handlers (command, AI, temp blocks).
         froz8n.smart.SmartMobsEvents.register();
 
-        // Replaces data/smartmobs/forge/biome_modifier/nether_zombie_spawns.json.
+        // A modest nudge, not the horde the old weight of 80 produced.
         BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(), MobCategory.MONSTER,
-                EntityType.ZOMBIE, 80, 2, 4);
+                EntityType.ZOMBIE, 25, 2, 3);
 
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> LOGGER.info("HELLO from server starting"));
-
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-        LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+        LOGGER.info("SmartMobs ready: miners {}%, garden {}%, breeds {}",
+                Math.round(Config.smartChance * 100), Math.round(Config.gardenChance * 100),
+                Config.enableBreeds ? Math.round(Config.breedChance * 100) + "%" : "off");
     }
+
+    // The gameplay code is shared verbatim with the NeoForge and Forge trees, where these
+    // are DeferredHolders; going through accessors keeps that code identical everywhere.
+    public static Item miningHelmet() { return MINING_HELMET; }
+
+    public static Item gardenHat() { return GARDEN_HAT; }
+
+    public static Item cardboardBox() { return CARDBOARD_BOX; }
+
+    public static Item soundJammer() { return SOUND_JAMMER; }
+
+    public static Block graspingRoots() { return GRASPING_ROOTS; }
+
+    public static Holder<MobEffect> zombieDisguise() { return ZOMBIE_DISGUISE; }
 
     private static <T extends Item> T registerItem(String path, T item) {
         return Registry.register(BuiltInRegistries.ITEM, itemKey(path), item);

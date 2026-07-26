@@ -1,60 +1,82 @@
 package froz8n;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-// An example config class. This is not required, but it's a good idea to have one to keep your config organized.
-// Demonstrates how to use NeoForge's config APIs
+/**
+ * Every knob that decides how hard the mod is.
+ *
+ * <p>The defaults are the playable tuning: special zombies are a minority, none of them
+ * outruns a sprinting player, they notice you at a normal render distance rather than
+ * across the map, and they cannot chew through obsidian.
+ */
 @EventBusSubscriber(modid = SmartMobs.MODID)
 public class Config {
+
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    private static final ModConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER
-            .comment("Whether to log the dirt block on common setup")
-            .define("logDirtBlock", true);
-
-    private static final ModConfigSpec.IntValue MAGIC_NUMBER = BUILDER
-            .comment("A magic number")
-            .defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
-
-    public static final ModConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER
-            .comment("What you want the introduction message to be for the magic number")
-            .define("magicNumberIntroduction", "The magic number is... ");
-
-    // a list of strings that are treated as resource locations for items
-    private static final ModConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER
-            .comment("A list of items to log on common setup.")
-            .defineListAllowEmpty("items", List.of("minecraft:iron_ingot"), Config::validateItemName);
+    private static final ModConfigSpec.DoubleValue SMART_CHANCE = BUILDER
+            .comment("Share of adult zombies that spawn as helmet-wearing miners")
+            .defineInRange("smartChance", 0.12, 0.0, 1.0);
+    private static final ModConfigSpec.DoubleValue GARDEN_CHANCE = BUILDER
+            .comment("Share of adult zombies that spawn as straw-hat garden zombies")
+            .defineInRange("gardenChance", 0.06, 0.0, 1.0);
+    private static final ModConfigSpec.DoubleValue BREED_CHANCE = BUILDER
+            .comment("Chance for an ordinary zombie to roll one of the six lesser breeds")
+            .defineInRange("breedChance", 0.30, 0.0, 1.0);
+    private static final ModConfigSpec.DoubleValue DAY_MOVE_SPEED = BUILDER
+            .comment("Miner movement speed by day. Vanilla zombies use 0.23, a sprinting player ~0.28")
+            .defineInRange("dayMoveSpeed", 0.25, 0.05, 1.0);
+    private static final ModConfigSpec.DoubleValue NIGHT_MOVE_SPEED = BUILDER
+            .comment("Miner movement speed at night, and always in the Nether")
+            .defineInRange("nightMoveSpeed", 0.30, 0.05, 1.0);
+    private static final ModConfigSpec.IntValue DETECTION_RANGE = BUILDER
+            .comment("How far a miner or garden zombie notices a player, in blocks")
+            .defineInRange("detectionRange", 32, 8, 128);
+    private static final ModConfigSpec.BooleanValue ALLOW_DIGGING = BUILDER
+            .comment("Whether miners may tunnel through blocks at all")
+            .define("allowDigging", true);
+    private static final ModConfigSpec.DoubleValue MAX_DIG_HARDNESS = BUILDER
+            .comment("Blocks with a higher destroy speed than this are never mined (obsidian is 50)")
+            .defineInRange("maxDigHardness", 5.0, 0.0, 100.0);
+    private static final ModConfigSpec.BooleanValue BREAK_PORTALS = BUILDER
+            .comment("Whether miners break nether portal frames they can see")
+            .define("breakPortals", false);
+    private static final ModConfigSpec.BooleanValue SUNLIGHT_IMMUNITY = BUILDER
+            .comment("Whether mod zombies ignore daylight. Off means vanilla burning rules apply")
+            .define("sunlightImmunity", false);
+    private static final ModConfigSpec.BooleanValue ENABLE_BREEDS = BUILDER
+            .comment("Whether the six lesser breeds spawn at all")
+            .define("enableBreeds", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
-    public static boolean logDirtBlock;
-    public static int magicNumber;
-    public static String magicNumberIntroduction;
-    public static Set<Item> items;
-
-    private static boolean validateItemName(final Object obj) {
-        return obj instanceof final String itemName && BuiltInRegistries.ITEM.containsKey(Identifier.parse(itemName));
-    }
+    public static double smartChance = 0.12;
+    public static double gardenChance = 0.06;
+    public static double breedChance = 0.30;
+    public static double dayMoveSpeed = 0.25;
+    public static double nightMoveSpeed = 0.30;
+    public static int detectionRange = 32;
+    public static boolean allowDigging = true;
+    public static double maxDigHardness = 5.0;
+    public static boolean breakPortals = false;
+    public static boolean sunlightImmunity = false;
+    public static boolean enableBreeds = true;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-        logDirtBlock = LOG_DIRT_BLOCK.get();
-        magicNumber = MAGIC_NUMBER.get();
-        magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
-
-        // convert the list of strings into a set of items
-        items = ITEM_STRINGS.get().stream()
-                .map(itemName -> BuiltInRegistries.ITEM.getValue(Identifier.parse(itemName)))
-                .collect(Collectors.toSet());
+        smartChance = SMART_CHANCE.get();
+        gardenChance = GARDEN_CHANCE.get();
+        breedChance = BREED_CHANCE.get();
+        dayMoveSpeed = DAY_MOVE_SPEED.get();
+        nightMoveSpeed = NIGHT_MOVE_SPEED.get();
+        detectionRange = DETECTION_RANGE.get();
+        allowDigging = ALLOW_DIGGING.get();
+        maxDigHardness = MAX_DIG_HARDNESS.get();
+        breakPortals = BREAK_PORTALS.get();
+        sunlightImmunity = SUNLIGHT_IMMUNITY.get();
+        enableBreeds = ENABLE_BREEDS.get();
     }
 }

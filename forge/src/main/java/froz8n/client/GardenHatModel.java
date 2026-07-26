@@ -1,6 +1,6 @@
 package froz8n.client;
 
-import froz8n.smartmobs;
+import froz8n.SmartMobs;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
@@ -11,7 +11,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 /** Geometry extracted from Wonderful Hats' Modelluffy and adapted to a humanoid head anchor. */
 public final class GardenHatModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(smartmobs.MODID,"garden_hat"),"main");
+            Identifier.fromNamespaceAndPath(SmartMobs.MODID,"garden_hat"),"main");
     public GardenHatModel(ModelPart root){super(root);setAllVisible(false);head.visible=true;}
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions e){e.registerLayerDefinition(LAYER,GardenHatModel::layer);}
     private static LayerDefinition layer(){

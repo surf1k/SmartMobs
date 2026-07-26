@@ -16,8 +16,8 @@ public final class JammerHud {
     public static void selectLocal(int newMode){mode=newMode;}
     private static void render(GuiGraphics g,DeltaTracker delta){
         Minecraft mc=Minecraft.getInstance();
-        if(mc.player==null||(!mc.player.getMainHandItem().is(froz8n.smartmobs.SOUND_JAMMER.get())
-                &&!mc.player.getOffhandItem().is(froz8n.smartmobs.SOUND_JAMMER.get())))return;
+        if(mc.player==null||(!mc.player.getMainHandItem().is(froz8n.SmartMobs.SOUND_JAMMER.get())
+                &&!mc.player.getOffhandItem().is(froz8n.SmartMobs.SOUND_JAMMER.get())))return;
         int pw=184,ph=82,x=Math.max(6,g.guiWidth()-pw-8),y=Math.max(6,g.guiHeight()-ph-8);
         g.fill(x,y,x+pw,y+ph,0xE0060D09);g.fill(x,y,x+pw,y+1,0xFF55D881);
         g.fill(x,y+ph-1,x+pw,y+ph,0xFF244A31);

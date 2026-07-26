@@ -29,7 +29,7 @@ public final class RootVisualClient {
         for(int i=0;i<9;i++){
             double x=cx+(random.nextDouble()-.5)*1.35,z=cz+(random.nextDouble()-.5)*1.35;
             int rotation=random.nextInt(4);
-            var state=froz8n.smartmobs.GRASPING_ROOTS.get().defaultBlockState()
+            var state=froz8n.SmartMobs.GRASPING_ROOTS.get().defaultBlockState()
                     .setValue(froz8n.block.GraspingRootsBlock.ROTATION,rotation);
             FallingBlockEntity entity=new FallingBlockEntity(mc.level,x,groundY-1.0,z,state);
             entity.setNoGravity(true);entity.noPhysics=true;entity.disableDrop();entity.setDeltaMovement(Vec3.ZERO);

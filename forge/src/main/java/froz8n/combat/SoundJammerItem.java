@@ -1,5 +1,6 @@
 package froz8n.combat;
 
+import froz8n.data.PersistentData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -23,9 +24,9 @@ public final class SoundJammerItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        int mode=player.getPersistentData().getIntOr(MODE,0);
+        int mode=PersistentData.of(player).getIntOr(MODE,0);
         String cooldownKey=mode==0?COOLDOWN_UNTIL:UP_COOLDOWN_UNTIL;
-        long remaining = player.getPersistentData().getLongOr(cooldownKey, 0L) - System.currentTimeMillis();
+        long remaining = PersistentData.of(player).getLongOr(cooldownKey, 0L) - System.currentTimeMillis();
         if (remaining > 0) {
             if (!level.isClientSide()) {
                 int seconds = Math.max(1, (int)Math.ceil(remaining / 1000.0));
@@ -41,8 +42,8 @@ public final class SoundJammerItem extends Item {
             level.playSound(null, player.blockPosition(),
                     mode==0?SoundEvents.WARDEN_SONIC_BOOM:SoundEvents.RAVAGER_ROAR,
                     SoundSource.PLAYERS, mode==0?1.4F:1.1F, mode==0?0.72F:0.58F);
-            player.getPersistentData().putLong(cooldownKey,
-                    System.currentTimeMillis() + (mode==0?30_000L:45_000L));
+            PersistentData.of(player).putLong(cooldownKey,
+                    System.currentTimeMillis() + (mode==0?20_000L:30_000L));
             SoundWaveNetwork.sendStatus(player);
         }
         player.swing(hand);
