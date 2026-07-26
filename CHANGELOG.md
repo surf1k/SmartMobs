@@ -1,4 +1,4 @@
-## 2.4 — first multi-loader release
+## 2.5 — balance pass and seven new breeds
 
 Minecraft 1.21.11 on Fabric, Quilt, NeoForge and Forge.
 
