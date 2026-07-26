@@ -1,0 +1,25 @@
+{
+  "item.smartmobs.cardboard_box": "Cardboard Box",
+  "item.smartmobs.mining_helmet": "Mining Helmet",
+  "item.smartmobs.garden_hat": "Garden Straw Hat",
+  "item.smartmobs.sound_jammer": "Acoustic Suppressor",
+  "item.smartmobs.zombie_serum": "Zombie Serum",
+  "item.smartmobs.zombie_serum.desc.1": "Temporarily masks the scent of a living human",
+  "item.smartmobs.zombie_serum.desc.2": "Zombies ignore you for 15 seconds",
+  "item.smartmobs.zombie_serum.desc.3": "Side effects: hunger and brief nausea",
+  "effect.smartmobs.zombie_disguise": "Half-Zombie",
+  "itemGroup.smartmobs.equipment": "SmartMobs: Survival",
+  "item.smartmobs.sound_jammer.desc.1": "Creates a moving field with a 5-block radius",
+  "item.smartmobs.sound_jammer.desc.2": "Stuns zombies caught in the signal",
+  "item.smartmobs.sound_jammer.desc.3": "Duration: 3s  •  Cooldown: 30s",
+  "item.smartmobs.sound_jammer.cooldown": "Suppressor recharging: %s s"
+  ,"item.smartmobs.sound_jammer.mode.down": "Mode: DOWN — stun"
+  ,"item.smartmobs.sound_jammer.mode.up": "Mode: UP — disorient"
+  ,"hud.smartmobs.jammer.title": "ACOUSTIC SUPPRESSOR"
+  ,"hud.smartmobs.jammer.stun": "STUN"
+  ,"hud.smartmobs.jammer.stun_info": "5 blocks • knockdown • 30 sec"
+  ,"hud.smartmobs.jammer.fear": "PANIC"
+  ,"hud.smartmobs.jammer.fear_info": "10 blocks • flee • 45 sec"
+  ,"hud.smartmobs.jammer.ready": "READY"
+  ,"hud.smartmobs.jammer.use": "RMB — USE SELECTED MODE"
+}
