@@ -29,5 +29,5 @@ bin/
 Thumbs.db
 .DS_Store
 
-# Superseded by forge/ - kept locally only
-.forge-backup/
+# Built jars collected for upload
+dist/

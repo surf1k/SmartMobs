@@ -62,8 +62,11 @@ you for testing.
 
 ## Installation
 
-Pick the file that matches your loader. Client **and** server both need the mod on a multiplayer world; the
-HUD, the knock-down animation and the root visuals are client-side, everything else runs on the server.
+Pick the file that matches your loader. The **Fabric** build additionally requires
+[Fabric API](https://modrinth.com/mod/fabric-api); the NeoForge and Forge builds have no dependencies.
+
+Client **and** server both need the mod on a multiplayer world: the HUD, the knock-down animation and the
+root visuals are client-side, everything else runs on the server.
 
 ## Compatibility
 

@@ -50,7 +50,8 @@ cd neoforge && ./gradlew build
 cd forge && ./gradlew build
 ```
 
-Jars land in `<loader>/build/libs/`.
+Jars land in `<loader>/build/libs/`. All three carry the same file name, so copies renamed per loader
+(`smartmobs-1.21.11-2.4-fabric.jar` and friends) are collected in `dist/` for uploading.
 
 To play in the dev environment use `./gradlew runClient` in the loader folder you are working on. All three
 projects point their run directory at the shared `run/` folder at the repository root.
