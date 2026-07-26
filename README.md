@@ -133,7 +133,13 @@ changed. What actually differs, going back:
 | `1.21.1/neoforge` | **Builds**, dev client boots clean |
 | `1.21.1/forge` | **Builds**, dev client boots clean |
 | `1.20.1/fabric` | **Builds**, dev client boots clean |
-| `1.20.1/forge` | in progress |
+| `1.20.1/forge` | **Builds**, dev client boots clean |
+
+"Boots clean" means the dev client reaches the title screen with every mixin/access
+transformer applied, all registries populated and no exceptions. It does not cover
+anything that needs a hand on the keyboard — the jammer HUD and key bindings, the
+rooted-input cancel and the knock-down animation are compile- and load-verified only on
+these versions.
 
 Gradle 8.10 cannot read class file 68, so these projects need `JAVA_HOME` pointed at the
 private JDK: `JAVA_HOME=D:/SmartMobs/.jdk21/jdk-21.0.11+10`.

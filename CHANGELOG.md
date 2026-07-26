@@ -1,3 +1,19 @@
+## 2.5.1 - back-ports
+
+Same mod, same balance, three more Minecraft versions.
+
+| Minecraft | Fabric | Quilt | NeoForge | Forge |
+| --- | --- | --- | --- | --- |
+| 1.21.11 | yes | yes | yes | yes |
+| 1.21.1 | yes | yes | yes | yes |
+| 1.20.1 | yes | yes | - | yes |
+
+Quilt Loader runs the Fabric file, so there is no separate Quilt download.
+
+Nothing changed in gameplay: the AI, the seven breeds, the three items and every config
+default are the same on every version. Only the loader plumbing differs, and that is
+invisible in game.
+
 ## 2.5 — balance pass and seven new breeds
 
 Minecraft 1.21.11 on Fabric, Quilt, NeoForge and Forge.
