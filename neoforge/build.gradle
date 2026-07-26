@@ -1,5 +1,6 @@
 plugins {
     id 'net.neoforged.moddev' version '2.0.142'
+    id 'com.modrinth.minotaur' version '2.8.7'
     id 'eclipse'
     id 'idea'
 }
@@ -70,6 +71,19 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 21
+}
+
+// ./gradlew modrinth  - reads the token from the MODRINTH_TOKEN environment variable,
+// which Minotaur picks up on its own. The token never appears in this file.
+modrinth {
+    projectId = providers.gradleProperty('modrinth_project').orElse(mod_id)
+    versionNumber = "${mod_version}+mc${minecraft_version}-neoforge"
+    versionName = "SmartMobs ${mod_version} - NeoForge ${minecraft_version}"
+    versionType = 'release'
+    uploadFile = tasks.jar
+    gameVersions = [minecraft_version]
+    loaders = ['neoforge']
+    changelog = file('../CHANGELOG.md').exists() ? file('../CHANGELOG.md').text : ''
 }
 
 tasks.named('jar', Jar).configure {
