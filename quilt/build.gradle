@@ -25,6 +25,13 @@ sourceSets.main.resources.srcDirs = ['../fabric/src/main/resources']
 loom {
     accessWidenerPath = file('../fabric/src/main/resources/smartmobs.accesswidener')
 
+    // Quilt Loader warns about classpath mods it cannot attribute without this.
+    mods {
+        smartmobs {
+            sourceSet sourceSets.main
+        }
+    }
+
     runs {
         client {
             runDir = 'run'
