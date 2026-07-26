@@ -3,30 +3,35 @@ package froz8n.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/** Smooth world-space pressure rings submitted as one geometry batch, not particles. */
+// Smooth world-space pressure rings drawn as one geometry batch, not particles.
+// 1.21.1 has no submit pipeline, so the rings go straight into the level buffer source.
 public final class SoundWaveRenderer {
     private static final Map<Integer, Long> STARTS = new HashMap<>();
     private SoundWaveRenderer() {}
     public static void register() { NeoForge.EVENT_BUS.addListener(SoundWaveRenderer::render); }
     public static void activate(int playerId) { STARTS.put(playerId, System.currentTimeMillis()); }
 
-    private static void render(RenderHandEvent event) {
-        if (event.getHand()!=InteractionHand.MAIN_HAND) return;
+    private static void render(RenderLevelStageEvent event) {
+        if (event.getStage()!=RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
         Minecraft mc=Minecraft.getInstance();
         if(mc.level==null)return;
         long now=System.currentTimeMillis();
         STARTS.entrySet().removeIf(e->now-e.getValue()>3100);
-        Vec3 camera=mc.gameRenderer.getMainCamera().position();
+        if(STARTS.isEmpty())return;
+        Vec3 camera=event.getCamera().getPosition();
+        MultiBufferSource.BufferSource buffers=mc.renderBuffers().bufferSource();
+        VertexConsumer consumer=buffers.getBuffer(RenderType.debugQuads());
+        PoseStack pose=event.getPoseStack();
         for(var entry:STARTS.entrySet()){
             Entity source=mc.level.getEntity(entry.getKey());
             if(source==null)continue;
@@ -35,14 +40,13 @@ public final class SoundWaveRenderer {
                 float t=(age-pulse)/.48F;
                 if(t<0||t>1)continue;
                 float eased=1-(1-t)*(1-t), radius=.25F+4.75F*eased, alpha=(1-t)*(1-t);
-                PoseStack pose=event.getPoseStack();
                 pose.pushPose();
                 pose.translate(source.getX()-camera.x,source.getY()-camera.y+.08,source.getZ()-camera.z);
-                event.getSubmitNodeCollector().submitCustomGeometry(pose,RenderTypes.debugQuads(),
-                        (p,c)->drawWave(p,c,radius,alpha));
+                drawWave(pose.last(),consumer,radius,alpha);
                 pose.popPose();
             }
         }
+        buffers.endBatch(RenderType.debugQuads());
     }
     private static void drawWave(PoseStack.Pose p,VertexConsumer c,float r,float a){
         band(p,c,r,.075F,color(a*.9F,0x5DE8FF));

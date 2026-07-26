@@ -2,10 +2,8 @@ package froz8n.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.zombie.Zombie;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Zombie;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -13,7 +11,8 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Smooth knock-down, unconscious twitch and recovery animation. */
+// Smooth knock-down, unconscious twitch and recovery animation. On 1.21.1 the event still
+// carries the entity itself, so there is no render state to match back to a zombie.
 public final class StunnedZombieRenderHandler {
     private record Anim(long fallStarted, long recoveryStarted) {}
     private static final Map<Integer, Anim> ANIMS = new HashMap<>();
@@ -27,9 +26,9 @@ public final class StunnedZombieRenderHandler {
         NeoForge.EVENT_BUS.addListener(StunnedZombieRenderHandler::after);
     }
 
-    private static void before(RenderLivingEvent.Pre<?, ?, ?> event) {
-        Zombie zombie = zombieNear(event.getRenderState().x, event.getRenderState().y, event.getRenderState().z);
-        Transform transform = zombie == null ? null : transform(zombie);
+    private static void before(RenderLivingEvent.Pre<?, ?> event) {
+        LivingEntity entity = event.getEntity();
+        Transform transform = entity instanceof Zombie zombie ? transform(zombie) : null;
         boolean active = transform != null && transform.fall > 0.001F;
         PUSHED.get().push(active);
         if (!active) return;
@@ -44,7 +43,7 @@ public final class StunnedZombieRenderHandler {
         pose.translate(0.0, -0.88 * transform.fall, 0.12 * transform.fall);
     }
 
-    private static void after(RenderLivingEvent.Post<?, ?, ?> event) {
+    private static void after(RenderLivingEvent.Post<?, ?> event) {
         ArrayDeque<Boolean> stack = PUSHED.get();
         if (!stack.isEmpty() && stack.pop()) event.getPoseStack().popPose();
     }
@@ -70,19 +69,6 @@ public final class StunnedZombieRenderHandler {
         if (t >= 1.0F) { ANIMS.remove(zombie.getId()); return null; }
         float upright = 1.0F - t*t*(3.0F-2.0F*t);
         return new Transform(upright, (float)Math.sin(t*Math.PI*2.0)*2.0F);
-    }
-
-    private static Zombie zombieNear(double x, double y, double z) {
-        if (Minecraft.getInstance().level == null) return null;
-        Zombie best = null; double bestDistance = .5;
-        for (Entity e : Minecraft.getInstance().level.getEntities(null,
-                new AABB(x-.5,y-.3,z-.5,x+.5,y+2.2,z+.5))) {
-            if (e instanceof Zombie zombie) {
-                double distance = zombie.distanceToSqr(x,y,z);
-                if (distance < bestDistance) { bestDistance=distance; best=zombie; }
-            }
-        }
-        return best;
     }
 
     private static float clamp(float v) { return Math.max(0, Math.min(1, v)); }

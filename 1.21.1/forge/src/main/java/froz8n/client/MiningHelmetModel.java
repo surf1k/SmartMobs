@@ -10,14 +10,13 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.resources.ResourceLocation;
 
 /** Exact wearable geometry used by mining_helmet 2.1.2, adapted for SmartMobs. */
-public final class MiningHelmetModel<T extends HumanoidRenderState> extends HumanoidModel<T> {
+public final class MiningHelmetModel<T extends LivingEntity> extends HumanoidModel<T> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(SmartMobs.MODID, "mining_helmet"), "main");
+            ResourceLocation.fromNamespaceAndPath(SmartMobs.MODID, "mining_helmet"), "main");
 
     public MiningHelmetModel(ModelPart root) {
         super(root);
@@ -27,11 +26,7 @@ public final class MiningHelmetModel<T extends HumanoidRenderState> extends Huma
         head.visible = true;
     }
 
-    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(LAYER, MiningHelmetModel::createLayer);
-    }
-
-    private static LayerDefinition createLayer() {
+    public static LayerDefinition createLayer() {
         MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
         // Replace vanilla's textured head cube with an empty anchor. Its children
         // below are the only geometry this armor model is allowed to render.

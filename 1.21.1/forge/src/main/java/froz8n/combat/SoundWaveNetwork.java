@@ -1,7 +1,7 @@
 package froz8n.combat;
 
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
@@ -14,7 +14,7 @@ public final class SoundWaveNetwork {
     public record Rooted(int durationTicks) {}
     public record RootBurst(int targetId,double x,double y,double z,long seed,int durationTicks) {}
     private static final SimpleChannel CHANNEL = ChannelBuilder
-            .named(Identifier.fromNamespaceAndPath("smartmobs", "sound_wave"))
+            .named(ResourceLocation.fromNamespaceAndPath("smartmobs", "sound_wave"))
             .networkProtocolVersion(6).simpleChannel();
     private SoundWaveNetwork() {}
 
@@ -56,12 +56,12 @@ public final class SoundWaveNetwork {
     }
     public static void sendStatus(Player player){
         long now=System.currentTimeMillis();
-        int down=(int)Math.min(Integer.MAX_VALUE,Math.max(0,player.getPersistentData().getLongOr("smartmobs_jammer_cooldown_until",0)-now));
-        int up=(int)Math.min(Integer.MAX_VALUE,Math.max(0,player.getPersistentData().getLongOr("smartmobs_jammer_up_cooldown_until",0)-now));
+        int down=(int)Math.min(Integer.MAX_VALUE,Math.max(0,froz8n.data.Nbt.getLongOr(player.getPersistentData(), "smartmobs_jammer_cooldown_until",0)-now));
+        int up=(int)Math.min(Integer.MAX_VALUE,Math.max(0,froz8n.data.Nbt.getLongOr(player.getPersistentData(), "smartmobs_jammer_up_cooldown_until",0)-now));
         var receiver=(net.minecraft.server.level.ServerPlayer)player;
         var connection=receiver.connection.getConnection();
         if(CHANNEL.isRemotePresent(connection))CHANNEL.send(
-                new Status(player.getPersistentData().getIntOr("smartmobs_jammer_mode",0),down,up),connection);
+                new Status(froz8n.data.Nbt.getIntOr(player.getPersistentData(), "smartmobs_jammer_mode",0),down,up),connection);
     }
     public static void setMode(int mode){CHANNEL.send(new SetMode(mode),PacketDistributor.SERVER.noArg());}
     public static void sendRooted(net.minecraft.server.level.ServerPlayer player,int ticks){

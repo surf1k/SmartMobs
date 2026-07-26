@@ -17,7 +17,7 @@ public final class RootVisualClient {
     private record Root(FallingBlockEntity entity,double x,double y,double z,long born,int duration,float delay){}
     private static final List<Root> ROOTS=new ArrayList<>();
     private RootVisualClient(){}
-    public static void register(){TickEvent.ClientTickEvent.Post.BUS.addListener(RootVisualClient::tick);}
+    public static void register(){net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(RootVisualClient::tick);}
 
     public static void activate(int targetId,double fallbackX,double fallbackY,double fallbackZ,long seed,int duration){
         Minecraft mc=Minecraft.getInstance();if(mc.level==null)return;
@@ -43,7 +43,8 @@ public final class RootVisualClient {
         mc.level.playLocalSound(cx,groundY,cz,SoundEvents.GRASS_PLACE,SoundSource.HOSTILE,.35F,.48F,false);
     }
 
-    private static void tick(TickEvent.ClientTickEvent.Post event){
+    private static void tick(TickEvent.ClientTickEvent event){
+        if(event.phase!=TickEvent.Phase.END)return;
         long now=System.currentTimeMillis();Iterator<Root> iterator=ROOTS.iterator();
         while(iterator.hasNext()){
             Root root=iterator.next();

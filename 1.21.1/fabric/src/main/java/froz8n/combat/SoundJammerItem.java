@@ -5,16 +5,16 @@ import froz8n.data.PersistentData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
-import java.util.function.Consumer;
+
+import java.util.List;
 
 public final class SoundJammerItem extends Item {
     private static final String COOLDOWN_UNTIL = "smartmobs_jammer_cooldown_until";
@@ -23,7 +23,7 @@ public final class SoundJammerItem extends Item {
     public SoundJammerItem(Properties properties) { super(properties); }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         int mode=Nbt.getIntOr(PersistentData.of(player), MODE,0);
         String cooldownKey=mode==0?COOLDOWN_UNTIL:UP_COOLDOWN_UNTIL;
@@ -35,7 +35,7 @@ public final class SoundJammerItem extends Item {
                         "item.smartmobs.sound_jammer.cooldown", seconds).withStyle(ChatFormatting.RED), true);
                 SoundWaveNetwork.sendStatus(player);
             }
-            return InteractionResult.FAIL;
+            return InteractionResultHolder.fail(stack);
         }
         if (!level.isClientSide()) {
             if(mode==0){ SoundJammerSystem.activate(player); SoundWaveNetwork.send(player); }
@@ -48,14 +48,13 @@ public final class SoundJammerItem extends Item {
             SoundWaveNetwork.sendStatus(player);
         }
         player.swing(hand);
-        return InteractionResult.SUCCESS;
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
-                                Consumer<Component> tooltip, TooltipFlag flag) {
-        tooltip.accept(Component.translatable("item.smartmobs.sound_jammer.desc.1").withStyle(ChatFormatting.GRAY));
-        tooltip.accept(Component.translatable("item.smartmobs.sound_jammer.desc.2").withStyle(ChatFormatting.GRAY));
-        tooltip.accept(Component.translatable("item.smartmobs.sound_jammer.desc.3").withStyle(ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("item.smartmobs.sound_jammer.desc.1").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.smartmobs.sound_jammer.desc.2").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.smartmobs.sound_jammer.desc.3").withStyle(ChatFormatting.GRAY));
     }
 }

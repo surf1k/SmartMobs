@@ -6,12 +6,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
 
 /** Geometry extracted from Wonderful Hats' Modelluffy and adapted to a humanoid head anchor. */
 @Environment(EnvType.CLIENT)
-public final class GardenHatModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
+public final class GardenHatModel<T extends LivingEntity> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(SmartMobs.MODID,"garden_hat"),"main");
     public GardenHatModel(ModelPart root){super(root);setAllVisible(false);head.visible=true;}

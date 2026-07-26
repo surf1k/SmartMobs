@@ -4,14 +4,14 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 
 public final class JammerHud {
     private static int mode; private static long downReady,upReady;
     private JammerHud(){}
     public static void addLayer(AddGuiOverlayLayersEvent e){e.getLayeredDraw().add(
-            Identifier.fromNamespaceAndPath("smartmobs","jammer_hud"),JammerHud::render);}
+            ResourceLocation.fromNamespaceAndPath("smartmobs","jammer_hud"),JammerHud::render);}
     public static void update(int newMode,int downTicks,int upTicks){mode=newMode;long now=System.currentTimeMillis();downReady=now+downTicks;upReady=now+upTicks;}
     public static void selectLocal(int newMode){mode=newMode;}
     private static void render(GuiGraphics g,DeltaTracker delta){

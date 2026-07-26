@@ -59,7 +59,7 @@ public final class SoundJammerSystem {
                 it.remove();
                 continue;
             }
-            ServerLevel level = player.level();
+            ServerLevel level = player.serverLevel();
             long now = level.getGameTime();
             long age = now - entry.getValue().started;
             long stunUntil = entry.getValue().ends + AFTER_TICKS;

@@ -3,7 +3,7 @@ package froz8n.smart.viz;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
@@ -20,7 +20,7 @@ public final class PathVizNetwork {
 
     private static final int PROTOCOL = 1;
     public static final SimpleChannel CHANNEL = ChannelBuilder
-            .named(Identifier.fromNamespaceAndPath("smartmobs", "pathviz"))
+            .named(ResourceLocation.fromNamespaceAndPath("smartmobs", "pathviz"))
             .networkProtocolVersion(PROTOCOL)
             .optional()
             .simpleChannel();

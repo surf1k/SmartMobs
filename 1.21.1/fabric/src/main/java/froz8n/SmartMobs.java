@@ -66,22 +66,13 @@ public final class SmartMobs implements ModInitializer {
             new ArmorItem(GARDEN_HAT_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final Item CARDBOARD_BOX = registerItem("cardboard_box",
             new ArmorItem(CARDBOARD_BOX_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties().durability(6)));
-    public static final Item GARDEN_HAT = registerItem("garden_hat",
-            new Item(new Item.Properties()
-                    .humanoidArmor(new ArmorMaterial(5, Map.of(ArmorType.HELMET, 1), 5,
-                            SoundEvents.ARMOR_EQUIP_LEATHER, 0, 0, ItemTags.REPAIRS_LEATHER_ARMOR,
-                            GARDEN_HAT_ASSET), ArmorType.HELMET)));
-    public static final Item CARDBOARD_BOX = registerItem("cardboard_box",
-            new Item(new Item.Properties().durability(6)
-                    .humanoidArmor(new ArmorMaterial(3, Map.of(ArmorType.HELMET, 0), 1, SoundEvents.ARMOR_EQUIP_LEATHER,
-                            0, 0, ItemTags.REPAIRS_LEATHER_ARMOR, CARDBOARD_BOX_ASSET), ArmorType.HELMET)));
     public static final Item SOUND_JAMMER = registerItem("sound_jammer",
             new froz8n.combat.SoundJammerItem(new Item.Properties().stacksTo(1)));
     public static final Item ZOMBIE_SERUM = registerItem("zombie_serum",
             new froz8n.combat.ZombieSerumItem(new Item.Properties().stacksTo(16)));
     public static final Block GRASPING_ROOTS = registerBlock("grasping_roots",
             new froz8n.block.GraspingRootsBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.PLANT).noCollision().noOcclusion().replaceable()
+                    .mapColor(MapColor.PLANT).noCollission().noOcclusion().replaceable()
                     .instabreak().sound(net.minecraft.world.level.block.SoundType.ROOTS)));
     public static final Holder<MobEffect> ZOMBIE_DISGUISE = Registry.registerForHolder(
             BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(MODID, "zombie_disguise"),

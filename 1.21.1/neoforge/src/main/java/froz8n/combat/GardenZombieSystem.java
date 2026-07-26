@@ -1,6 +1,7 @@
 package froz8n.combat;
 
 import froz8n.SmartMobs;
+import froz8n.data.Nbt;
 import froz8n.data.PersistentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -10,12 +11,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.equine.ZombieHorse;
-import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.animal.horse.ZombieHorse;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
@@ -68,15 +69,15 @@ public final class GardenZombieSystem {
         Player player=zombie.getTarget() instanceof Player p?p:nearest(level,zombie);
         if(player==null||ZombieSerumSystem.isMasked(player))return;
         double distance=zombie.distanceTo(player);
-        double previous=PersistentData.of(zombie).getDoubleOr(LAST_DISTANCE,distance);
+        double previous=Nbt.getDoubleOr(PersistentData.of(zombie), LAST_DISTANCE,distance);
         PersistentData.of(zombie).putDouble(LAST_DISTANCE,distance);
-        if(distance<=20&&distance>=6&&level.getGameTime()>=PersistentData.of(zombie).getLongOr(CHARGE_COOLDOWN,0)
+        if(distance<=20&&distance>=6&&level.getGameTime()>=Nbt.getLongOr(PersistentData.of(zombie), CHARGE_COOLDOWN,0)
                 &&froz8n.smart.SmartMobWorldRules.canUseOutdoorNightBehavior(level,zombie.blockPosition().above())&&player.onGround()
                 &&strictLineOfSight(level,zombie,player)){
             startCharge(level,zombie,player);
             return;
         }
-        if(distance>30||level.getGameTime()<PersistentData.of(zombie).getLongOr(COOLDOWN,0)
+        if(distance>30||level.getGameTime()<Nbt.getLongOr(PersistentData.of(zombie), COOLDOWN,0)
                 ||!strictLineOfSight(level,zombie,player))return;
         Vec3 horizontal=player.getDeltaMovement().multiply(1,0,1);
         Vec3 away=new Vec3(player.getX()-zombie.getX(),0,player.getZ()-zombie.getZ());
@@ -87,11 +88,11 @@ public final class GardenZombieSystem {
     }
 
     private static void startCharge(ServerLevel level,Zombie zombie,Player player){
-        ZombieHorse horse=EntityType.ZOMBIE_HORSE.create(level,EntitySpawnReason.MOB_SUMMONED);
+        ZombieHorse horse=EntityType.ZOMBIE_HORSE.create(level);
         if(horse==null)return;
-        horse.snapTo(zombie.getX(),zombie.getY(),zombie.getZ(),zombie.getYRot(),0);
+        horse.moveTo(zombie.getX(),zombie.getY(),zombie.getZ(),zombie.getYRot(),0);
         horse.setPersistenceRequired();
-        horse.setItemSlot(EquipmentSlot.SADDLE,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SADDLE));
+        horse.equipSaddle(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SADDLE),null);
         var movement=horse.getAttribute(Attributes.MOVEMENT_SPEED);
         if(movement!=null)movement.setBaseValue(.34);
         var step=horse.getAttribute(Attributes.STEP_HEIGHT);
@@ -99,12 +100,12 @@ public final class GardenZombieSystem {
         var health=horse.getAttribute(Attributes.MAX_HEALTH);
         if(health!=null){health.setBaseValue(30);horse.setHealth(30);}
         level.addFreshEntity(horse);
-        zombie.startRiding(horse,true,true);
+        zombie.startRiding(horse,true);
         long now=level.getGameTime();
         // A minute between charges, not thirty seconds.
         PersistentData.of(zombie).putLong(CHARGE_COOLDOWN,now+1200);
         CHARGES.put(horse.getUUID(),new Charge(horse,zombie.getUUID(),player.getUUID(),now+100));
-        level.playSound(null,horse.blockPosition(),SoundEvents.HORSE_SADDLE.value(),SoundSource.HOSTILE,1.4F,.85F);
+        level.playSound(null,horse.blockPosition(),SoundEvents.HORSE_SADDLE,SoundSource.HOSTILE,1.4F,.85F);
         level.sendParticles(ParticleTypes.CLOUD,horse.getX(),horse.getY()+.2,horse.getZ(),18,.5,.15,.5,.05);
     }
 
@@ -157,7 +158,7 @@ public final class GardenZombieSystem {
     /** @return {@code true} while a charging (or just-dismounted) garden zombie is the attacker. */
     public static boolean suppressChargeAttack(DamageSource source){
         if(source.getEntity() instanceof Zombie zombie
-                &&PersistentData.of(zombie).getLongOr(CHARGE_RECOVERY_UNTIL,0)>zombie.level().getGameTime())return true;
+                &&Nbt.getLongOr(PersistentData.of(zombie), CHARGE_RECOVERY_UNTIL,0)>zombie.level().getGameTime())return true;
         if(source.getEntity() instanceof Zombie zombie&&zombie.getVehicle() instanceof ZombieHorse)return true;
         return false;
     }
@@ -199,7 +200,7 @@ public final class GardenZombieSystem {
     }
 
     public static void tickRooted(Player player){
-        if(PersistentData.of(player).getLongOr(ROOT_UNTIL,0)<=player.level().getGameTime())return;
+        if(Nbt.getLongOr(PersistentData.of(player), ROOT_UNTIL,0)<=player.level().getGameTime())return;
         player.setSprinting(false);
         Vec3 m=player.getDeltaMovement();
         player.setDeltaMovement(0,Math.min(0,m.y),0);
@@ -227,7 +228,7 @@ public final class GardenZombieSystem {
     }
     public static void tickRootVisuals(){}
     private static double findGroundY(ServerLevel level,double x,double fromY,double z){
-        int y=net.minecraft.util.Mth.floor(fromY),min=level.getMinY()+1;
+        int y=net.minecraft.util.Mth.floor(fromY),min=level.getMinBuildHeight()+1;
         while(y>min){BlockPos below=BlockPos.containing(x,y-1,z);
             if(!level.getBlockState(below).getCollisionShape(level,below).isEmpty())return y;y--;}
         return fromY;

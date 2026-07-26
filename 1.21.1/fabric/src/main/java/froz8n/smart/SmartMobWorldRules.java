@@ -24,7 +24,7 @@ public final class SmartMobWorldRules {
     }
 
     public static boolean isNightLike(Level level) {
-        return isNether(level) || !level.isBrightOutside();
+        return isNether(level) || (!level.isDay()||level.isThundering());
     }
 
     public static boolean canUseOutdoorNightBehavior(ServerLevel level, BlockPos pos) {

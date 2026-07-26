@@ -4,17 +4,15 @@ import froz8n.SmartMobs;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.resources.ResourceLocation;
 
 /** Geometry extracted from Wonderful Hats' Modelluffy and adapted to a humanoid head anchor. */
-public final class GardenHatModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
+public final class GardenHatModel<T extends LivingEntity> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(SmartMobs.MODID,"garden_hat"),"main");
+            ResourceLocation.fromNamespaceAndPath(SmartMobs.MODID,"garden_hat"),"main");
     public GardenHatModel(ModelPart root){super(root);setAllVisible(false);head.visible=true;}
-    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions e){e.registerLayerDefinition(LAYER,GardenHatModel::layer);}
-    private static LayerDefinition layer(){
+    public static LayerDefinition createLayer(){
         MeshDefinition mesh=HumanoidModel.createMesh(CubeDeformation.NONE,0);
         PartDefinition head=mesh.getRoot().addOrReplaceChild("head",CubeListBuilder.create(),PartPose.ZERO);
         CubeListBuilder b=CubeListBuilder.create()

@@ -4,9 +4,9 @@
   "spawners": [
     {
       "type": "minecraft:zombie",
-      "weight": 80,
+      "weight": 25,
       "minCount": 2,
-      "maxCount": 4
+      "maxCount": 3
     }
   ]
 }

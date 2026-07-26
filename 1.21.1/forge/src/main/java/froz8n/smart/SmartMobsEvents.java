@@ -7,12 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.FluidTags;
@@ -47,14 +47,13 @@ public final class SmartMobsEvents {
 
     /** Wire all gameplay handlers onto their respective event buses. */
     public static void register() {
-        RegisterCommandsEvent.BUS.addListener(SmartMobsEvents::onRegisterCommands);
-        // Predicate listener: returning true cancels the join so the entity is never added.
-        EntityJoinLevelEvent.BUS.addListener(SmartMobsEvents::onEntityJoinLevel);
-        LivingEvent.LivingTickEvent.BUS.addListener(SmartMobsEvents::onLivingTick);
-        net.minecraftforge.event.entity.living.LivingHurtEvent.BUS.addListener(SmartMobsEvents::onLivingHurt);
-        TickEvent.ServerTickEvent.Post.BUS.addListener(SmartMobsEvents::onServerTick);
-        // BreakEvent is cancellable: a Predicate listener returning true cancels the event.
-        BlockEvent.BreakEvent.BUS.addListener(SmartMobsEvents::onBlockBreak);
+        var bus = net.minecraftforge.common.MinecraftForge.EVENT_BUS;
+        bus.addListener(SmartMobsEvents::onRegisterCommands);
+        bus.addListener(SmartMobsEvents::onEntityJoinLevel);
+        bus.addListener(SmartMobsEvents::onLivingTick);
+        bus.addListener(SmartMobsEvents::onLivingHurt);
+        bus.addListener(SmartMobsEvents::onServerTick);
+        bus.addListener(SmartMobsEvents::onBlockBreak);
     }
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {
@@ -63,7 +62,7 @@ public final class SmartMobsEvents {
                 Commands.literal("spawnsmart")
                         // 1.21.11 replaced source.hasPermission(int) with the PermissionCheck API.
                         // LEVEL_GAMEMASTERS corresponds to the old op permission level 2.
-                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("zombie")
                                 .executes(ctx -> spawnSmartZombie(ctx.getSource())))
         );
@@ -74,7 +73,7 @@ public final class SmartMobsEvents {
         Vec3 p = source.getPosition();
         BlockPos pos = BlockPos.containing(p);
 
-        Entity entity = EntityType.ZOMBIE.spawn(level, pos, EntitySpawnReason.COMMAND);
+        Entity entity = EntityType.ZOMBIE.spawn(level, pos, MobSpawnType.COMMAND);
         if (!(entity instanceof Zombie zombie)) {
             source.sendSuccess(() -> Component.literal("Failed to spawn smart zombie."), false);
             return 0;
@@ -111,24 +110,24 @@ public final class SmartMobsEvents {
     /**
      * Cancels the spawn of any baby zombie and applies random gear to adult zombies.
      *
-     * @return {@code true} to cancel the event (prevents the entity from joining the level).
+     * <p>Cancelling the event prevents the entity from joining the level.
      */
-    private static boolean onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide() || event.loadedFromDisk()) return false;
-        if (!(event.getEntity() instanceof Zombie zombie)) return false;
+    private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide() || event.loadedFromDisk()) return;
+        if (!(event.getEntity() instanceof Zombie zombie)) return;
 
         // Block ALL baby zombies from spawning, regardless of variant or equipment.
         if (zombie.isBaby()) {
-            return true; // cancel the join event → baby zombie never spawns
+            event.setCanceled(true); // baby zombie never spawns
+            return;
         }
 
-        if (zombie.getType() != EntityType.ZOMBIE) return false;
-        if (isSmartMobZombie(zombie) || ZombieBreeds.isBreed(zombie)) return false;
+        if (zombie.getType() != EntityType.ZOMBIE) return;
+        if (isSmartMobZombie(zombie) || ZombieBreeds.isBreed(zombie)) return;
         double roll = zombie.getRandom().nextDouble();
         if (roll < froz8n.Config.gardenChance) makeGarden(zombie);
         else if (roll < froz8n.Config.gardenChance + froz8n.Config.smartChance) makeSmart(zombie);
         else ZombieBreeds.assign(zombie);
-        return false;
     }
 
     private static void onLivingTick(LivingEvent.LivingTickEvent event) {
@@ -160,7 +159,7 @@ public final class SmartMobsEvents {
             }
             syncSwimmingPose(zombie);
             if(froz8n.Config.sunlightImmunity&&!zombie.isInLava()&&zombie.getRemainingFireTicks()>0)zombie.clearFire();
-            if(zombie.getPersistentData().getBooleanOr(GARDEN_KEY,false))
+            if(froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), GARDEN_KEY,false))
                 froz8n.combat.GardenZombieSystem.tickGarden(zombie);
             froz8n.combat.ZombieSerumSystem.tickZombie(zombie);
             froz8n.combat.SoundJammerSystem.tickZombie(zombie);
@@ -200,25 +199,29 @@ public final class SmartMobsEvents {
     /**
      * Damage suppressors plus the two breed reactions, all on one hook.
      *
-     * @return {@code true} to cancel the hit (EventBus 7 cancellation contract).
+     * <p>Cancelling the event cancels the hit.
      */
-    private static boolean onLivingHurt(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
+    private static void onLivingHurt(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
         if (froz8n.combat.SoundJammerSystem.suppressFearedAttack(event.getSource())) event.setAmount(0);
-        if (froz8n.combat.ZombieSerumSystem.preventAttack(event.getEntity(), event.getSource())) return true;
-        if (froz8n.combat.GardenZombieSystem.suppressChargeAttack(event.getSource())) return true;
+        if (froz8n.combat.ZombieSerumSystem.preventAttack(event.getEntity(), event.getSource())) {
+            event.setCanceled(true); return;
+        }
+        if (froz8n.combat.GardenZombieSystem.suppressChargeAttack(event.getSource())) {
+            event.setCanceled(true); return;
+        }
         // A thief robs the player it just hit, a sapper goes off on the blow that kills it.
         if (event.getEntity() instanceof net.minecraft.world.entity.player.Player victim
                 && event.getSource().getEntity() instanceof Zombie attacker) {
             ZombieBreeds.onZombieHitPlayer(attacker, victim);
-            if (ZombieBreeds.isFleeing(attacker)) return true;
+            if (ZombieBreeds.isFleeing(attacker)) { event.setCanceled(true); return; }
         }
         if (event.getEntity() instanceof Zombie hurt) {
             ZombieBreeds.onZombieDamaged(hurt, event.getSource(), event.getAmount());
         }
-        return false;
     }
 
-    private static void onServerTick(TickEvent.ServerTickEvent.Post event) {
+    private static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
         froz8n.combat.SoundJammerSystem.tickFields(
                 net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer());
         froz8n.combat.GardenZombieSystem.tickRootVisuals();
@@ -229,33 +232,32 @@ public final class SmartMobsEvents {
     /**
      * Cancels the break of blocks placed by smart mobs so they never drop items.
      *
-     * @return {@code true} to cancel the event (EventBus 7 cancellation contract).
+     * <p>Cancelling the event stops the vanilla break, so nothing drops.
      */
-    private static boolean onBlockBreak(BlockEvent.BreakEvent event) {
+    private static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (!(event.getLevel() instanceof ServerLevel level)) {
-            return false;
+            return;
         }
         BlockPos pos = event.getPos();
         if (TempBlockManager.isTemp(level, pos)) {
             // Block was placed by a smart mob: remove it without dropping anything.
             level.removeBlock(pos, false);
             TempBlockManager.untrack(level, pos);
-            return true; // cancel the vanilla break so nothing drops
+            event.setCanceled(true);
         }
-        return false;
     }
 
     public static boolean isSmart(Entity entity) {
-        return entity.getPersistentData().getBooleanOr(SMART_KEY, false);
+        return froz8n.data.Nbt.getBooleanOr(entity.getPersistentData(), SMART_KEY, false);
     }
 
     public static boolean isSmartMobZombie(Zombie zombie) {
-        return zombie.getPersistentData().getBooleanOr(SMART_KEY, false)
-                || zombie.getPersistentData().getBooleanOr(GARDEN_KEY, false);
+        return froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), SMART_KEY, false)
+                || froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), GARDEN_KEY, false);
     }
 
     private static void clearLegacyBoxZombie(Zombie zombie) {
-        if (zombie.getPersistentData().getBooleanOr(LEGACY_BOX_KEY, false)) {
+        if (froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), LEGACY_BOX_KEY, false)) {
             zombie.getPersistentData().remove(LEGACY_BOX_KEY);
             zombie.getPersistentData().remove(LEGACY_BOX_SHIELD_KEY);
         }

@@ -919,7 +919,7 @@ public final class SmartZombieBrain {
         int x = Mth.floor(z.getX());
         int zPos = Mth.floor(z.getZ());
         int startY = Mth.floor(z.getY());
-        int minY = level.getMinY();
+        int minY = level.getMinBuildHeight();
         for (int y = startY; y >= minY; y--) {
             BlockPos feet = new BlockPos(x, y, zPos);
             if (!isOpen(level, feet)) return null;
@@ -930,7 +930,7 @@ public final class SmartZombieBrain {
     }
 
     private static boolean canUseWaterClutch(ServerLevel level, BlockPos pos) {
-        return !level.environmentAttributes().getValue(net.minecraft.world.attribute.EnvironmentAttributes.WATER_EVAPORATES, pos);
+        return !level.dimensionType().ultraWarm();
     }
 
     private static void cleanupClutch(ServerLevel level, Zombie z, BrainState st) {

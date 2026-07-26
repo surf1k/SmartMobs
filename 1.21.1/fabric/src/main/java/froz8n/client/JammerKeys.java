@@ -13,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public final class JammerKeys {
-    private static final KeyMapping.Category CATEGORY=KeyMapping.Category.register(
-            ResourceLocation.fromNamespaceAndPath(SmartMobs.MODID,"jammer"));
+    // Before 1.21.11 a key category is just a translation key, not a registered object.
+    private static final String CATEGORY="key.categories.smartmobs.jammer";
     private static final KeyMapping DOWN=KeyBindingHelper.registerKeyBinding(
             new KeyMapping("key.smartmobs.jammer_down",264,CATEGORY));
     private static final KeyMapping UP=KeyBindingHelper.registerKeyBinding(
@@ -33,8 +33,8 @@ public final class JammerKeys {
     public static boolean onScroll(double deltaY){
         if(!holdingJammer())return false;
         var mc=Minecraft.getInstance();
-        boolean shift=com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow(),org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
-                ||com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow(),org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
+        boolean shift=com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow().getWindow(),org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
+                ||com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow().getWindow(),org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
         if(!shift)return false;
         int mode=deltaY>0?0:1;
         JammerHud.selectLocal(mode);setMode(mode);

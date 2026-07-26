@@ -67,9 +67,8 @@ public final class SmartMobsEvents {
     private static void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("spawnsmart")
-                        // 1.21.11 replaced source.hasPermission(int) with the PermissionCheck API.
-                        // LEVEL_GAMEMASTERS corresponds to the old op permission level 2.
-                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        // Plain op level 2; the PermissionCheck API only arrives in 1.21.11.
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("zombie")
                                 .executes(ctx -> spawnSmartZombie(ctx.getSource())))
         );

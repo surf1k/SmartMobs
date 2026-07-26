@@ -3,15 +3,14 @@ package froz8n.mixin;
 import froz8n.data.PersistentDataHolder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Gives every entity the mod-owned NBT tag that Forge provided as {@code getPersistentData()}. */
+// Gives every entity the mod-owned NBT tag that Forge provides as getPersistentData().
 @Mixin(Entity.class)
 public abstract class EntityPersistentDataMixin implements PersistentDataHolder {
 
@@ -29,15 +28,15 @@ public abstract class EntityPersistentDataMixin implements PersistentDataHolder 
         return this.smartmobs$persistentData;
     }
 
-    @Inject(method = "saveWithoutId(Lnet/minecraft/world/level/storage/ValueOutput;)V", at = @At("TAIL"))
-    private void smartmobs$save(ValueOutput output, CallbackInfo ci) {
+    @Inject(method = "saveWithoutId(Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/nbt/CompoundTag;", at = @At("RETURN"))
+    private void smartmobs$save(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
         if (this.smartmobs$persistentData != null && !this.smartmobs$persistentData.isEmpty()) {
-            output.store(SMARTMOBS$TAG, CompoundTag.CODEC, this.smartmobs$persistentData);
+            cir.getReturnValue().put(SMARTMOBS$TAG, this.smartmobs$persistentData);
         }
     }
 
-    @Inject(method = "load(Lnet/minecraft/world/level/storage/ValueInput;)V", at = @At("TAIL"))
-    private void smartmobs$load(ValueInput input, CallbackInfo ci) {
-        this.smartmobs$persistentData = input.read(SMARTMOBS$TAG, CompoundTag.CODEC).orElse(null);
+    @Inject(method = "load(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
+    private void smartmobs$load(CompoundTag tag, CallbackInfo ci) {
+        this.smartmobs$persistentData = tag.contains(SMARTMOBS$TAG) ? tag.getCompound(SMARTMOBS$TAG) : null;
     }
 }

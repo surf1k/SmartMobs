@@ -1,4 +1,7 @@
 {
+  "key.categories.smartmobs.jammer": "SmartMobs: Suppressor",
+  "key.smartmobs.jammer_down": "Select stun mode",
+  "key.smartmobs.jammer_up": "Select panic mode",
   "item.smartmobs.cardboard_box": "Cardboard Box",
   "item.smartmobs.mining_helmet": "Mining Helmet",
   "item.smartmobs.garden_hat": "Garden Straw Hat",

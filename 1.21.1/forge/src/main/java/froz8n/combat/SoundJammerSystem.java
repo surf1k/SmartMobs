@@ -1,11 +1,12 @@
 package froz8n.combat;
 
+import froz8n.data.Nbt;
 import froz8n.data.PersistentData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -58,7 +59,7 @@ public final class SoundJammerSystem {
                 it.remove();
                 continue;
             }
-            ServerLevel level = player.level();
+            ServerLevel level = player.serverLevel();
             long now = level.getGameTime();
             long age = now - entry.getValue().started;
             long stunUntil = entry.getValue().ends + AFTER_TICKS;
@@ -85,9 +86,9 @@ public final class SoundJammerSystem {
     }
 
     public static boolean isStunned(Zombie zombie) {
-        return PersistentData.of(zombie).getLongOr(STUN_UNTIL, 0L) > zombie.level().getGameTime();
+        return Nbt.getLongOr(PersistentData.of(zombie), STUN_UNTIL, 0L) > zombie.level().getGameTime();
     }
-    public static boolean isFeared(Zombie zombie){return PersistentData.of(zombie).getLongOr(FEAR_UNTIL,0)>zombie.level().getGameTime();}
+    public static boolean isFeared(Zombie zombie){return Nbt.getLongOr(PersistentData.of(zombie), FEAR_UNTIL,0)>zombie.level().getGameTime();}
     public static boolean isControlled(Zombie zombie){return isStunned(zombie)||isFeared(zombie);}
     /** @return {@code true} when a panicking zombie is the attacker, so the hit deals nothing. */
     public static boolean suppressFearedAttack(DamageSource source){
@@ -96,7 +97,7 @@ public final class SoundJammerSystem {
 
     public static void tickZombie(Zombie zombie) {
         boolean stunned = isStunned(zombie);
-        boolean forced = PersistentData.of(zombie).getBooleanOr(FORCED, false);
+        boolean forced = Nbt.getBooleanOr(PersistentData.of(zombie), FORCED, false);
         if (stunned) {
             zombie.setTarget(null);
             zombie.getNavigation().stop();
@@ -118,8 +119,8 @@ public final class SoundJammerSystem {
             zombie.setNoGravity(false);
             zombie.noPhysics=false;
             if((zombie.tickCount+zombie.getId())%8==0||zombie.getNavigation().isDone()){
-                double fx=PersistentData.of(zombie).getDoubleOr(FEAR_X,zombie.getX());
-                double fz=PersistentData.of(zombie).getDoubleOr(FEAR_Z,zombie.getZ());
+                double fx=Nbt.getDoubleOr(PersistentData.of(zombie), FEAR_X,zombie.getX());
+                double fz=Nbt.getDoubleOr(PersistentData.of(zombie), FEAR_Z,zombie.getZ());
                 double dx=zombie.getX()-fx,dz=zombie.getZ()-fz,len=Math.max(.01,Math.sqrt(dx*dx+dz*dz));
                 zombie.getNavigation().moveTo(zombie.getX()+dx/len*14,zombie.getY(),zombie.getZ()+dz/len*14,1.35);
             }

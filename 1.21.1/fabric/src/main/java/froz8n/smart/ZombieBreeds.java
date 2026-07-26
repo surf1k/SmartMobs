@@ -188,7 +188,7 @@ public final class ZombieBreeds {
             if (Nbt.getLongOr(PersistentData.of(zombie), GHOST_NEXT_HIT, 0L) <= now) {
                 PersistentData.of(zombie).putLong(GHOST_NEXT_HIT, now + GHOST_HIT_COOLDOWN);
                 zombie.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
-                target.hurtServer(level, level.damageSources().mobAttack(zombie), GHOST_DAMAGE);
+                target.hurt(level.damageSources().mobAttack(zombie), GHOST_DAMAGE);
                 level.playSound(null, zombie.blockPosition(), SoundEvents.SOUL_ESCAPE.value(),
                         SoundSource.HOSTILE, 0.9F, 1.4F);
             }

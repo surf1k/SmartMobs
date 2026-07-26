@@ -88,11 +88,11 @@ public final class GardenZombieSystem {
     }
 
     private static void startCharge(ServerLevel level,Zombie zombie,Player player){
-        ZombieHorse horse=EntityType.ZOMBIE_HORSE.create(level,MobSpawnType.MOB_SUMMONED);
+        ZombieHorse horse=EntityType.ZOMBIE_HORSE.create(level);
         if(horse==null)return;
-        horse.snapTo(zombie.getX(),zombie.getY(),zombie.getZ(),zombie.getYRot(),0);
+        horse.moveTo(zombie.getX(),zombie.getY(),zombie.getZ(),zombie.getYRot(),0);
         horse.setPersistenceRequired();
-        horse.setItemSlot(EquipmentSlot.SADDLE,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SADDLE));
+        horse.equipSaddle(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SADDLE),null);
         var movement=horse.getAttribute(Attributes.MOVEMENT_SPEED);
         if(movement!=null)movement.setBaseValue(.34);
         var step=horse.getAttribute(Attributes.STEP_HEIGHT);
@@ -100,12 +100,12 @@ public final class GardenZombieSystem {
         var health=horse.getAttribute(Attributes.MAX_HEALTH);
         if(health!=null){health.setBaseValue(30);horse.setHealth(30);}
         level.addFreshEntity(horse);
-        zombie.startRiding(horse,true,true);
+        zombie.startRiding(horse,true);
         long now=level.getGameTime();
         // A minute between charges, not thirty seconds.
         PersistentData.of(zombie).putLong(CHARGE_COOLDOWN,now+1200);
         CHARGES.put(horse.getUUID(),new Charge(horse,zombie.getUUID(),player.getUUID(),now+100));
-        level.playSound(null,horse.blockPosition(),SoundEvents.HORSE_SADDLE.value(),SoundSource.HOSTILE,1.4F,.85F);
+        level.playSound(null,horse.blockPosition(),SoundEvents.HORSE_SADDLE,SoundSource.HOSTILE,1.4F,.85F);
         level.sendParticles(ParticleTypes.CLOUD,horse.getX(),horse.getY()+.2,horse.getZ(),18,.5,.15,.5,.05);
     }
 
@@ -228,7 +228,7 @@ public final class GardenZombieSystem {
     }
     public static void tickRootVisuals(){}
     private static double findGroundY(ServerLevel level,double x,double fromY,double z){
-        int y=net.minecraft.util.Mth.floor(fromY),min=level.getMinY()+1;
+        int y=net.minecraft.util.Mth.floor(fromY),min=level.getMinBuildHeight()+1;
         while(y>min){BlockPos below=BlockPos.containing(x,y-1,z);
             if(!level.getBlockState(below).getCollisionShape(level,below).isEmpty())return y;y--;}
         return fromY;

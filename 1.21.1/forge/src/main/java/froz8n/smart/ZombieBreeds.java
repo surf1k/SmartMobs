@@ -1,6 +1,7 @@
 package froz8n.smart;
 
 import froz8n.Config;
+import froz8n.data.Nbt;
 import froz8n.data.PersistentData;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -13,7 +14,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -73,7 +74,7 @@ public final class ZombieBreeds {
 
     /** @return the breed id of this zombie, or an empty string for a plain one. */
     public static String breedOf(Zombie zombie) {
-        return PersistentData.of(zombie).getStringOr(BREED_KEY, "");
+        return Nbt.getStringOr(PersistentData.of(zombie), BREED_KEY, "");
     }
 
     public static boolean isBreed(Zombie zombie) {
@@ -184,10 +185,10 @@ public final class ZombieBreeds {
         } else {
             zombie.setDeltaMovement(Vec3.ZERO);
             long now = level.getGameTime();
-            if (PersistentData.of(zombie).getLongOr(GHOST_NEXT_HIT, 0L) <= now) {
+            if (Nbt.getLongOr(PersistentData.of(zombie), GHOST_NEXT_HIT, 0L) <= now) {
                 PersistentData.of(zombie).putLong(GHOST_NEXT_HIT, now + GHOST_HIT_COOLDOWN);
                 zombie.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
-                target.hurtServer(level, level.damageSources().mobAttack(zombie), GHOST_DAMAGE);
+                target.hurt(level.damageSources().mobAttack(zombie), GHOST_DAMAGE);
                 level.playSound(null, zombie.blockPosition(), SoundEvents.SOUL_ESCAPE.value(),
                         SoundSource.HOSTILE, 0.9F, 1.4F);
             }
@@ -197,7 +198,7 @@ public final class ZombieBreeds {
     private static void tickScreamer(ServerLevel level, Zombie zombie) {
         if ((zombie.tickCount + zombie.getId()) % 20 != 0) return;
         long now = level.getGameTime();
-        if (PersistentData.of(zombie).getLongOr(SCREAM_COOLDOWN, 0L) > now) return;
+        if (Nbt.getLongOr(PersistentData.of(zombie), SCREAM_COOLDOWN, 0L) > now) return;
         Player target = level.getNearestPlayer(zombie, SCREAM_RANGE);
         if (target == null || target.isSpectator() || target.isCreative()
                 || froz8n.combat.ZombieSerumSystem.isMasked(target)
@@ -233,7 +234,7 @@ public final class ZombieBreeds {
     }
 
     private static void tickThief(ServerLevel level, Zombie zombie) {
-        long until = PersistentData.of(zombie).getLongOr(THIEF_FLEE_UNTIL, 0L);
+        long until = Nbt.getLongOr(PersistentData.of(zombie), THIEF_FLEE_UNTIL, 0L);
         if (until <= level.getGameTime()) return;
         zombie.setTarget(null);
         zombie.setAggressive(false);
@@ -286,7 +287,7 @@ public final class ZombieBreeds {
         if (amount < zombie.getHealth()) return;
         // The blast catches the sapper too, which would re-enter this handler; one detonation
         // per zombie, flagged before the explosion goes off.
-        if (PersistentData.of(zombie).getBooleanOr(SAPPER_SPENT, false)) return;
+        if (Nbt.getBooleanOr(PersistentData.of(zombie), SAPPER_SPENT, false)) return;
         PersistentData.of(zombie).putBoolean(SAPPER_SPENT, true);
         // Damage-free terrain: the blast hurts whoever is standing next to it, nothing else.
         level.explode(zombie, zombie.getX(), zombie.getY(0.5), zombie.getZ(),
@@ -296,7 +297,7 @@ public final class ZombieBreeds {
     /** @return {@code true} while a thief is running away with something of yours. */
     public static boolean isFleeing(Zombie zombie) {
         return THIEF.equals(breedOf(zombie))
-                && PersistentData.of(zombie).getLongOr(THIEF_FLEE_UNTIL, 0L) > zombie.level().getGameTime();
+                && Nbt.getLongOr(PersistentData.of(zombie), THIEF_FLEE_UNTIL, 0L) > zombie.level().getGameTime();
     }
 
     private static void hold(Zombie zombie, net.minecraft.world.item.Item item) {

@@ -6,12 +6,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
 
 /** Native 1.21 humanoid adaptation of Somies' OptiFine cardboard-box model. */
 @Environment(EnvType.CLIENT)
-public final class CardboardBoxModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
+public final class CardboardBoxModel<T extends LivingEntity> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(SmartMobs.MODID,"cardboard_box"),"main");
     public CardboardBoxModel(ModelPart root){super(root);setAllVisible(false);head.visible=true;}

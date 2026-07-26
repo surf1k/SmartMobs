@@ -8,12 +8,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.FluidTags;
@@ -60,7 +60,7 @@ public final class SmartMobsEvents {
                 Commands.literal("spawnsmart")
                         // 1.21.11 replaced source.hasPermission(int) with the PermissionCheck API.
                         // LEVEL_GAMEMASTERS corresponds to the old op permission level 2.
-                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("zombie")
                                 .executes(ctx -> spawnSmartZombie(ctx.getSource())))
         );
@@ -71,7 +71,7 @@ public final class SmartMobsEvents {
         Vec3 p = source.getPosition();
         BlockPos pos = BlockPos.containing(p);
 
-        Entity entity = EntityType.ZOMBIE.spawn(level, pos, EntitySpawnReason.COMMAND);
+        Entity entity = EntityType.ZOMBIE.spawn(level, pos, MobSpawnType.COMMAND);
         if (!(entity instanceof Zombie zombie)) {
             source.sendSuccess(() -> Component.literal("Failed to spawn smart zombie."), false);
             return 0;
@@ -155,7 +155,7 @@ public final class SmartMobsEvents {
             // Daylight is the player's ally again: only the hat wearers survive it, and
             // that is plain vanilla behaviour for a mob with a head item.
             if(froz8n.Config.sunlightImmunity&&!zombie.isInLava()&&zombie.getRemainingFireTicks()>0)zombie.clearFire();
-            if(zombie.getPersistentData().getBooleanOr(GARDEN_KEY,false))
+            if(froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), GARDEN_KEY,false))
                 froz8n.combat.GardenZombieSystem.tickGarden(zombie);
             froz8n.combat.ZombieSerumSystem.tickZombie(zombie);
             froz8n.combat.SoundJammerSystem.tickZombie(zombie);
@@ -239,16 +239,16 @@ public final class SmartMobsEvents {
     }
 
     public static boolean isSmart(Entity entity) {
-        return entity.getPersistentData().getBooleanOr(SMART_KEY, false);
+        return froz8n.data.Nbt.getBooleanOr(entity.getPersistentData(), SMART_KEY, false);
     }
 
     public static boolean isSmartMobZombie(Zombie zombie) {
-        return zombie.getPersistentData().getBooleanOr(SMART_KEY, false)
-                || zombie.getPersistentData().getBooleanOr(GARDEN_KEY, false);
+        return froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), SMART_KEY, false)
+                || froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), GARDEN_KEY, false);
     }
 
     private static void clearLegacyBoxZombie(Zombie zombie) {
-        if (zombie.getPersistentData().getBooleanOr(LEGACY_BOX_KEY, false)) {
+        if (froz8n.data.Nbt.getBooleanOr(zombie.getPersistentData(), LEGACY_BOX_KEY, false)) {
             zombie.getPersistentData().remove(LEGACY_BOX_KEY);
             zombie.getPersistentData().remove(LEGACY_BOX_SHIELD_KEY);
         }

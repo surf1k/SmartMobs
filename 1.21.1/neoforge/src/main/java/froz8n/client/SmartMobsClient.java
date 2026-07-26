@@ -1,18 +1,14 @@
 package froz8n.client;
 
 import froz8n.SmartMobs;
-import froz8n.combat.SoundWaveNetwork;
-import froz8n.smart.viz.ClientPathStore;
-import froz8n.smart.viz.PathVizNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.client.resources.model.EquipmentClientInfo;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -24,7 +20,6 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 
 import java.util.function.Function;
 
@@ -63,7 +58,7 @@ public final class SmartMobsClient {
 
     @SubscribeEvent
     static void registerGuiLayers(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(Identifier.fromNamespaceAndPath(SmartMobs.MODID, "jammer_hud"), JammerHud::render);
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(SmartMobs.MODID, "jammer_hud"), JammerHud::render);
     }
 
     /** The custom head geometry for the three hats (Forge's IClientItemExtensions hook). */
@@ -74,27 +69,18 @@ public final class SmartMobsClient {
         registerHat(event, SmartMobs.CARDBOARD_BOX.get(), CardboardBoxModel.LAYER, CardboardBoxModel::new);
     }
 
-    @SubscribeEvent
-    static void registerClientPayloadHandlers(RegisterClientPayloadHandlersEvent event) {
-        event.register(SoundWaveNetwork.Start.TYPE, (payload, context) ->
-                context.enqueueWork(() -> SoundWaveRenderer.activate(payload.playerId())));
-        event.register(SoundWaveNetwork.Status.TYPE, (payload, context) ->
-                context.enqueueWork(() -> JammerHud.update(payload.mode(), payload.downTicks(), payload.upTicks())));
-        event.register(SoundWaveNetwork.Rooted.TYPE, (payload, context) ->
-                context.enqueueWork(() -> RootedInputControl.rootFor(payload.durationTicks())));
-        event.register(SoundWaveNetwork.RootBurst.TYPE, (payload, context) ->
-                context.enqueueWork(() -> RootVisualClient.activate(payload.targetId(), payload.x(), payload.y(),
-                        payload.z(), payload.seed(), payload.durationTicks())));
-        event.register(PathVizNetwork.Payload.TYPE, (payload, context) ->
-                context.enqueueWork(() -> ClientPathStore.put(payload.data())));
-    }
-
     private static void registerHat(RegisterClientExtensionsEvent event, Item item, ModelLayerLocation layer,
-                                    Function<ModelPart, HumanoidModel<HumanoidRenderState>> modelFactory) {
+                                    Function<ModelPart, HumanoidModel<LivingEntity>> modelFactory) {
         event.registerItem(new IClientItemExtensions() {
             @Override
-            public Model getHumanoidArmorModel(ItemStack stack, EquipmentClientInfo.LayerType type, Model original) {
-                return modelFactory.apply(Minecraft.getInstance().getEntityModels().bakeLayer(layer));
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack,
+                                                          EquipmentSlot slot, HumanoidModel<?> original) {
+                HumanoidModel<LivingEntity> model =
+                        modelFactory.apply(Minecraft.getInstance().getEntityModels().bakeLayer(layer));
+                // Both are HumanoidModel; the wildcard on the vanilla side makes the copy raw.
+                ((HumanoidModel) original).copyPropertiesTo(model);
+                return model;
             }
         }, item);
     }

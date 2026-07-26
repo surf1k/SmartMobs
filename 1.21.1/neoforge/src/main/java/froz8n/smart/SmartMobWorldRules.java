@@ -3,7 +3,7 @@ package froz8n.smart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -24,7 +24,7 @@ public final class SmartMobWorldRules {
     }
 
     public static boolean isNightLike(Level level) {
-        return isNether(level) || !level.isBrightOutside();
+        return isNether(level) || (!level.isDay()||level.isThundering());
     }
 
     public static boolean canUseOutdoorNightBehavior(ServerLevel level, BlockPos pos) {
