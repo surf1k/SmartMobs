@@ -24,12 +24,15 @@ neoForge {
     runs {
         client {
             client()
-            // Reuse the dev world that already lives next to the three loader projects.
-            gameDirectory = file('../run')
+            gameDirectory = file('run')
+            // ./gradlew runClient -PquickPlay=<save folder> boots straight into that world.
+            if (project.hasProperty('quickPlay')) {
+                programArguments.addAll '--quickPlaySingleplayer', project.property('quickPlay').toString()
+            }
         }
         server {
             server()
-            gameDirectory = file('../run')
+            gameDirectory = file('run')
             programArguments.addAll '--nogui'
         }
     }

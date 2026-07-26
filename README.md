@@ -1,7 +1,7 @@
 # SmartMobs
 
 Zombies that plan a route, mine through walls, pillar, bridge, parkour and hunt in packs — plus three items
-to fight back with. Minecraft **1.21.11**, built for three loaders from one shared design.
+to fight back with. Minecraft **1.21.11**, built for every current loader from one shared design.
 
 ![icon](branding/icon.png)
 
@@ -12,13 +12,15 @@ The player-facing description (the text used for the Modrinth page) lives in [MO
 | Folder | Loader | Build system |
 | --- | --- | --- |
 | `fabric/` | Fabric Loader 0.19.3 + Fabric API 0.141.5 | Fabric Loom 1.17 |
+| `quilt/` | Quilt Loader 0.30.0 (compiles the Fabric sources) | Quilt Loom 1.15 |
 | `neoforge/` | NeoForge 21.11.44 | ModDevGradle 2.0 |
 | `forge/` | MinecraftForge 61.1.0 | ForgeGradle 6 |
 | `branding/` | mod icon (512 and 128 px) | — |
-| `run/` | shared dev game directory | — |
+| `dist/` | jars renamed per loader, ready to upload (git-ignored) | — |
+| `run/` | the old Forge dev game directory, left untouched | — |
 
 Each folder is a standalone Gradle project with its own wrapper. The gameplay code (`froz8n.smart`,
-`froz8n.combat`) is the same design in all three; only the loader-facing edges differ:
+`froz8n.combat`) is the same design in all of them; only the loader-facing edges differ:
 
 | Concern | Fabric | NeoForge / Forge |
 | --- | --- | --- |
@@ -31,6 +33,15 @@ Each folder is a standalone Gradle project with its own wrapper. The gameplay co
 | HUD | `HudElementRegistry` | `RegisterGuiLayersEvent` / `AddGuiOverlayLayersEvent` |
 | Nether spawns | `BiomeModifications.addSpawn` | `neoforge:add_spawns` / `forge:add_spawns` JSON |
 | Widened access | `smartmobs.accesswidener` | `META-INF/accesstransformer.cfg` |
+
+### Why `quilt/` has no sources of its own
+
+Quilt Loader runs Fabric mods through its Fabric compatibility layer, and Quilt's own libraries (QSL and
+Quilted Fabric API) were never released for 1.21.11 — the newest builds target 1.21/1.21.1. So there is
+nothing loader-specific to write: `quilt/build.gradle` points its source set at `../fabric/src` and depends
+on Quilt Loader plus the regular Fabric API. The jar it produces is the Fabric jar; the project exists so
+`./gradlew runClient` can prove the mod actually boots on Quilt Loader. **Ship the Fabric file to Quilt
+users** and tick both loaders on the Modrinth version.
 
 ## Building
 
@@ -50,11 +61,29 @@ cd neoforge && ./gradlew build
 cd forge && ./gradlew build
 ```
 
-Jars land in `<loader>/build/libs/`. All three carry the same file name, so copies renamed per loader
+```bash
+cd quilt && ./gradlew build
+```
+
+Jars land in `<loader>/build/libs/`. They all carry the same file name, so copies renamed per loader
 (`smartmobs-1.21.11-2.4-fabric.jar` and friends) are collected in `dist/` for uploading.
 
-To play in the dev environment use `./gradlew runClient` in the loader folder you are working on. All three
-projects point their run directory at the shared `run/` folder at the repository root.
+## Running and testing
+
+`./gradlew runClient` in a loader folder launches that loader's dev client. Each project keeps its own
+`run/` directory, so the loaders never share configs or worlds.
+
+Every run config also accepts a quick-play property that boots straight into a save, which is how the
+loaders were smoke-tested without touching the menus:
+
+```bash
+cd fabric && ./gradlew runClient -PquickPlay=SmartMobsTest
+```
+
+`run/saves/SmartMobsTest` is a throwaway copy of a small world carrying the `smoketest` data pack
+(`.smoketest-datapack/` at the repository root is the template). Its `load` and `tick` functions set the
+time to midnight, summon a few vanilla zombies in front of the player and run `/spawnsmart zombie`, so the
+mob AI, the command and the spawn hook all execute while the log is being watched for exceptions.
 
 ## Licence
 

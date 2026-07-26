@@ -6,7 +6,7 @@ SmartMobs replaces the vanilla "walk into a wall until sunrise" zombie with one 
 through your walls, pillars up to your rooftop base, bridges gaps, parkours across ravines — and brings
 friends. Then it gives you three tools to fight back.
 
-Minecraft **1.21.11** · Fabric · NeoForge · Forge
+Minecraft **1.21.11** · Fabric · Quilt · NeoForge · Forge
 
 ---
 
@@ -64,6 +64,10 @@ you for testing.
 
 Pick the file that matches your loader. The **Fabric** build additionally requires
 [Fabric API](https://modrinth.com/mod/fabric-api); the NeoForge and Forge builds have no dependencies.
+
+**Quilt users take the Fabric file.** Quilt Loader runs it through its Fabric compatibility layer — install
+Fabric API alongside it. There is no separate Quilt build because Quilt's own libraries (QSL / Quilted
+Fabric API) have never been released for 1.21.11.
 
 Client **and** server both need the mod on a multiplayer world: the HUD, the knock-down animation and the
 root visuals are client-side, everything else runs on the server.

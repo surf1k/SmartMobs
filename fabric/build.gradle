@@ -27,6 +27,10 @@ loom {
         // Loom creates "client" and "server" for us; these blocks only add settings.
         client {
             runDir = 'run'
+            // ./gradlew runClient -PquickPlay=<save folder> boots straight into that world.
+            if (project.hasProperty('quickPlay')) {
+                programArgs '--quickPlaySingleplayer', project.property('quickPlay').toString()
+            }
         }
         server {
             runDir = 'run'

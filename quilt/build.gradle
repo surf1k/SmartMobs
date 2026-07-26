@@ -1,0 +1,65 @@
+plugins {
+    id 'org.quiltmc.loom' version '1.15.1'
+    id 'eclipse'
+    id 'idea'
+}
+
+group = mod_group_id
+version = mod_version
+
+base {
+    archivesName = mod_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+// Quilt Loader runs Fabric mods, and Quilt's own libraries (QSL / Quilted Fabric API)
+// have no Minecraft 1.21.11 release - so there is nothing loader-specific to write here.
+// This project compiles the Fabric sources unchanged; its only job is to prove the mod
+// loads and runs on Quilt Loader (./gradlew runClient).
+sourceSets.main.java.srcDirs = ['../fabric/src/main/java']
+sourceSets.main.resources.srcDirs = ['../fabric/src/main/resources']
+
+loom {
+    accessWidenerPath = file('../fabric/src/main/resources/smartmobs.accesswidener')
+
+    runs {
+        client {
+            runDir = 'run'
+            // ./gradlew runClient -PquickPlay=<save folder> boots straight into that world.
+            if (project.hasProperty('quickPlay')) {
+                programArgs '--quickPlaySingleplayer', project.property('quickPlay').toString()
+            }
+        }
+        server {
+            runDir = 'run'
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "org.quiltmc:quilt-loader:${quilt_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [minecraft_version_range: '~1.21.11',
+                             loader_version_range   : '>=0.19.0',
+                             mod_id                 : mod_id, mod_name: mod_name, mod_license: mod_license,
+                             mod_version            : mod_version, mod_authors: '', mod_description: '',]
+
+    inputs.properties replaceProperties
+
+    filesMatching('fabric.mod.json') {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}

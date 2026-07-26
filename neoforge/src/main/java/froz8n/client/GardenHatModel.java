@@ -6,11 +6,8 @@ import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /** Geometry extracted from Wonderful Hats' Modelluffy and adapted to a humanoid head anchor. */
-@OnlyIn(Dist.CLIENT)
 public final class GardenHatModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(SmartMobs.MODID,"garden_hat"),"main");

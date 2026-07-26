@@ -4,10 +4,7 @@ import net.minecraft.client.model.monster.zombie.ZombieModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public final class SwimmingZombieModel extends ZombieModel<ZombieRenderState> {
     public SwimmingZombieModel(ModelPart root) {
         super(root);

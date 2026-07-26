@@ -12,11 +12,8 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /** Exact wearable geometry used by mining_helmet 2.1.2, adapted for SmartMobs. */
-@OnlyIn(Dist.CLIENT)
 public final class MiningHelmetModel<T extends HumanoidRenderState> extends HumanoidModel<T> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(SmartMobs.MODID, "mining_helmet"), "main");

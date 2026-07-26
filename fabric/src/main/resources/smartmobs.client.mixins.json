@@ -4,6 +4,7 @@
   "package": "froz8n.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "ClientInputAccessor",
     "KeyboardInputMixin",
     "LivingEntityRendererMixin",
     "MouseHandlerMixin"

@@ -6,11 +6,8 @@ import net.minecraft.client.model.geom.*;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /** Native 1.21 humanoid adaptation of Somies' OptiFine cardboard-box model. */
-@OnlyIn(Dist.CLIENT)
 public final class CardboardBoxModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(SmartMobs.MODID,"cardboard_box"),"main");
