@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "froz8n.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "KeyboardInputMixin",
+    "LivingEntityRendererMixin",
+    "MouseHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

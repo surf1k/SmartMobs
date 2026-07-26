@@ -1,0 +1,82 @@
+plugins {
+    id 'fabric-loom' version '1.17.17'
+    id 'eclipse'
+    id 'idea'
+}
+
+group = mod_group_id
+version = mod_version
+
+base {
+    archivesName = mod_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    // Ship the sources so the jar can be attached in an IDE.
+    withSourcesJar()
+}
+
+loom {
+    // Fabric's counterpart to Forge's access transformers. Widens the private
+    // FallingBlockEntity(Level, double, double, double, BlockState) constructor used by
+    // the client-side root visuals.
+    accessWidenerPath = file('src/main/resources/smartmobs.accesswidener')
+
+    runs {
+        // Loom creates "client" and "server" for us; these blocks only add settings.
+        client {
+            runDir = 'run'
+        }
+        server {
+            runDir = 'run'
+            programArgs '--nogui'
+        }
+    }
+}
+
+repositories {
+    // Loom adds the Fabric and Mojang repositories automatically.
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    // Official Mojang mappings, so the vanilla names in this source tree are the same
+    // ones the Forge build used (Identifier, Zombie, ServerLevel, ...).
+    mappings loom.officialMojangMappings()
+
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+}
+
+// Expand the mod metadata properties into fabric.mod.json, the way the Forge build
+// expanded them into mods.toml.
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [minecraft_version_range: minecraft_version_range,
+                             loader_version_range   : loader_version_range,
+                             mod_id                 : mod_id, mod_name: mod_name, mod_license: mod_license,
+                             mod_version            : mod_version, mod_authors: mod_authors,
+                             mod_description        : mod_description,]
+
+    inputs.properties replaceProperties
+
+    filesMatching('fabric.mod.json') {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes(["Specification-Title"     : mod_id,
+                    "Specification-Vendor"    : mod_authors,
+                    "Specification-Version"   : "1", // We are version 1 of ourselves
+                    "Implementation-Title"    : project.name,
+                    "Implementation-Version"  : project.version,
+                    "Implementation-Vendor"   : mod_authors])
+    }
+}

@@ -1,0 +1,36 @@
+# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader = "javafml"
+# A version range to match for the FML mod loader
+loaderVersion = "${loader_version_range}"
+# The license for your mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
+license = "${mod_license}"
+
+[[mods]]
+# The modid of the mod
+modId = "${mod_id}"
+# The version number of the mod
+version = "${mod_version}"
+# A display name for the mod
+displayName = "${mod_name}"
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile = "icon.png"
+# The authors of the mod
+authors = "${mod_authors}"
+# The description text for the mod (multi line!)
+description = '''${mod_description}'''
+
+# A dependency on NeoForge itself.
+[[dependencies."${mod_id}"]]
+modId = "neoforge"
+type = "required"
+versionRange = "${neoforge_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+# A dependency on the Minecraft version this mod was built against.
+[[dependencies."${mod_id}"]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "rotation=0": { "model": "smartmobs:block/grasping_roots", "y": 0 },
+    "rotation=1": { "model": "smartmobs:block/grasping_roots", "y": 90 },
+    "rotation=2": { "model": "smartmobs:block/grasping_roots", "y": 180 },
+    "rotation=3": { "model": "smartmobs:block/grasping_roots", "y": 270 }
+  }
+}

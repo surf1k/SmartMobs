@@ -1,0 +1,9 @@
+{
+  "textures":{"box":"smartmobs:item/cardboard_box","particle":"smartmobs:item/cardboard_box"},
+  "elements":[{"from":[2,3,2],"to":[14,13,14],"faces":{
+    "north":{"texture":"#box"},"south":{"texture":"#box"},"east":{"texture":"#box"},
+    "west":{"texture":"#box"},"up":{"texture":"#box"},"down":{"texture":"#box"}
+  }}],
+  "display":{"gui":{"rotation":[30,225,0],"translation":[0,1,0],"scale":[0.8,0.8,0.8]},
+    "ground":{"scale":[0.4,0.4,0.4]},"thirdperson_righthand":{"scale":[0.5,0.5,0.5]}}
+}

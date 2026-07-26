@@ -1,0 +1,22 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "side": "minecraft:block/mangrove_roots_side",
+    "top": "minecraft:block/mangrove_roots_top",
+    "particle": "minecraft:block/mangrove_roots_side"
+  },
+  "elements": [
+    { "from": [6,0,6], "to": [10,12,10], "faces": {
+      "down":{"texture":"#top"},"up":{"texture":"#top"},"north":{"texture":"#side"},"south":{"texture":"#side"},"west":{"texture":"#side"},"east":{"texture":"#side"}
+    }},
+    { "from": [2,0,7], "to": [7,3,9], "rotation":{"origin":[7,2,8],"axis":"z","angle":-22.5}, "faces": {
+      "down":{"texture":"#top"},"up":{"texture":"#top"},"north":{"texture":"#side"},"south":{"texture":"#side"},"west":{"texture":"#side"},"east":{"texture":"#side"}
+    }},
+    { "from": [9,0,7], "to": [15,3,9], "rotation":{"origin":[9,2,8],"axis":"z","angle":22.5}, "faces": {
+      "down":{"texture":"#top"},"up":{"texture":"#top"},"north":{"texture":"#side"},"south":{"texture":"#side"},"west":{"texture":"#side"},"east":{"texture":"#side"}
+    }},
+    { "from": [7,0,1], "to": [9,3,7], "rotation":{"origin":[8,2,7],"axis":"x","angle":22.5}, "faces": {
+      "down":{"texture":"#top"},"up":{"texture":"#top"},"north":{"texture":"#side"},"south":{"texture":"#side"},"west":{"texture":"#side"},"east":{"texture":"#side"}
+    }}
+  ]
+}
