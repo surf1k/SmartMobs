@@ -85,6 +85,12 @@ cd fabric && ./gradlew runClient -PquickPlay=SmartMobsTest
 time to midnight, summon a few vanilla zombies in front of the player and run `/spawnsmart zombie`, so the
 mob AI, the command and the spawn hook all execute while the log is being watched for exceptions.
 
+All four loaders have been through that run on 1.21.11: the mod initialises, the biome modifications apply,
+the world loads, the player joins, the summoned zombies get their gear and the brain ticks for 20 seconds
+with no exceptions. What it does *not* cover is anything that needs a hand on the keyboard — the jammer
+HUD and its key bindings, the rooted-input cancel and the knock-down animation are compile- and
+load-verified only.
+
 ## Licence
 
 All rights reserved (see `mod_license` in each `gradle.properties`).
