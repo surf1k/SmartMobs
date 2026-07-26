@@ -12,6 +12,7 @@ logs/
 
 # Local JDK unpacked for the Java 21 toolchain
 .jdk21/
+.jdk25/
 
 # IDE
 .idea/
