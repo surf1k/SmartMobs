@@ -12,6 +12,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.equine.ZombieHorse;
@@ -87,7 +88,7 @@ public final class GardenZombieSystem {
     }
 
     private static void startCharge(ServerLevel level,Zombie zombie,Player player){
-        ZombieHorse horse=EntityType.ZOMBIE_HORSE.create(level,EntitySpawnReason.MOB_SUMMONED);
+        ZombieHorse horse=EntityTypes.ZOMBIE_HORSE.create(level,EntitySpawnReason.MOB_SUMMONED);
         if(horse==null)return;
         horse.snapTo(zombie.getX(),zombie.getY(),zombie.getZ(),zombie.getYRot(),0);
         horse.setPersistenceRequired();
@@ -195,7 +196,7 @@ public final class GardenZombieSystem {
         level.playSound(null,ground,SoundEvents.MANGROVE_ROOTS_BREAK,SoundSource.HOSTILE,.9F,.78F);
         level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK,level.getBlockState(ground)),
                 player.getX(),player.getY()+.03,player.getZ(),32,.7,.04,.7,.075);
-        SoundWaveNetwork.sendRootBurst(level,player.getId(),player.getX(),player.getY(),player.getZ(),level.random.nextLong(),30);
+        SoundWaveNetwork.sendRootBurst(level,player.getId(),player.getX(),player.getY(),player.getZ(),level.getRandom().nextLong(),30);
     }
 
     public static void tickRooted(Player player){

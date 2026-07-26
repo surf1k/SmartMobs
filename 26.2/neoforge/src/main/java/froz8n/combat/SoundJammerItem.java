@@ -30,8 +30,8 @@ public final class SoundJammerItem extends Item {
         if (remaining > 0) {
             if (!level.isClientSide()) {
                 int seconds = Math.max(1, (int)Math.ceil(remaining / 1000.0));
-                player.displayClientMessage(Component.translatable(
-                        "item.smartmobs.sound_jammer.cooldown", seconds).withStyle(ChatFormatting.RED), true);
+                player.sendOverlayMessage(Component.translatable(
+                        "item.smartmobs.sound_jammer.cooldown", seconds).withStyle(ChatFormatting.RED));
                 SoundWaveNetwork.sendStatus(player);
             }
             return InteractionResult.FAIL;

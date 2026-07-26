@@ -17,6 +17,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -128,7 +129,7 @@ public final class SmartMobs implements ModInitializer {
 
         // A modest nudge, not the horde the old weight of 80 produced.
         BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(), MobCategory.MONSTER,
-                EntityType.ZOMBIE, 25, 2, 3);
+                EntityTypes.ZOMBIE, 25, 2, 3);
 
         LOGGER.info("SmartMobs ready: miners {}%, garden {}%, breeds {}",
                 Math.round(Config.smartChance * 100), Math.round(Config.gardenChance * 100),

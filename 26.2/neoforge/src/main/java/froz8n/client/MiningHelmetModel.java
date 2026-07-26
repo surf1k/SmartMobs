@@ -22,7 +22,7 @@ public final class MiningHelmetModel<T extends HumanoidRenderState> extends Huma
         super(root);
         // The equipment texture contains UVs only for the helmet. Never render the
         // inherited humanoid body/arms/legs with it.
-        setAllVisible(false);
+        body.visible=false;rightArm.visible=false;leftArm.visible=false;rightLeg.visible=false;leftLeg.visible=false;hat.visible=false;
         head.visible = true;
     }
 

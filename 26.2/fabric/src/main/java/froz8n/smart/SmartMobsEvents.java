@@ -17,6 +17,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -79,7 +80,7 @@ public final class SmartMobsEvents {
         Vec3 p = source.getPosition();
         BlockPos pos = BlockPos.containing(p);
 
-        Entity entity = EntityType.ZOMBIE.spawn(level, pos, EntitySpawnReason.COMMAND);
+        Entity entity = EntityTypes.ZOMBIE.spawn(level, pos, EntitySpawnReason.COMMAND);
         if (!(entity instanceof Zombie zombie)) {
             source.sendSuccess(() -> Component.literal("Failed to spawn smart zombie."), false);
             return 0;
@@ -127,7 +128,7 @@ public final class SmartMobsEvents {
             return true; // cancel the spawn -> baby zombie never appears
         }
 
-        if (zombie.getType() != EntityType.ZOMBIE) return false;
+        if (zombie.getType() != EntityTypes.ZOMBIE) return false;
         if (isSmartMobZombie(zombie) || ZombieBreeds.isBreed(zombie)) return false;
         double roll = zombie.getRandom().nextDouble();
         if (roll < froz8n.Config.gardenChance) makeGarden(zombie);
@@ -141,7 +142,7 @@ public final class SmartMobsEvents {
         if (entity.level().isClientSide()) {
             // The humanoid renderer builds swimAmount locally from this pose. Keep it
             // in step with the server so zombies use the swimming model animation.
-            if (entity instanceof Zombie zombie && zombie.getType() == EntityType.ZOMBIE) syncSwimmingPose(zombie);
+            if (entity instanceof Zombie zombie && zombie.getType() == EntityTypes.ZOMBIE) syncSwimmingPose(zombie);
             return;
         }
         if (entity instanceof Zombie zombie) {
@@ -151,7 +152,7 @@ public final class SmartMobsEvents {
                 zombie.discard();
                 return;
             }
-            if (zombie.getType() != EntityType.ZOMBIE) return;
+            if (zombie.getType() != EntityTypes.ZOMBIE) return;
             clearLegacyBoxZombie(zombie);
             boolean smartMob = isSmartMobZombie(zombie);
             if (smartMob) {

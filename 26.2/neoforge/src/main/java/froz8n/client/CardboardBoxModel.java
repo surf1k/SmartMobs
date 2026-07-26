@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
 public final class CardboardBoxModel<T extends HumanoidRenderState> extends HumanoidModel<T>{
     public static final ModelLayerLocation LAYER=new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(SmartMobs.MODID,"cardboard_box"),"main");
-    public CardboardBoxModel(ModelPart root){super(root);setAllVisible(false);head.visible=true;}
+    public CardboardBoxModel(ModelPart root){super(root);body.visible=false;rightArm.visible=false;leftArm.visible=false;rightLeg.visible=false;leftLeg.visible=false;hat.visible=false;head.visible=true;}
     public static LayerDefinition createLayer(){
         MeshDefinition mesh=HumanoidModel.createMesh(CubeDeformation.NONE,0);
         PartDefinition head=mesh.getRoot().addOrReplaceChild("head",CubeListBuilder.create(),PartPose.ZERO);

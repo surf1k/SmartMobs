@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -22,7 +23,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
@@ -71,7 +72,7 @@ public final class SmartMobsEvents {
         Vec3 p = source.getPosition();
         BlockPos pos = BlockPos.containing(p);
 
-        Entity entity = EntityType.ZOMBIE.spawn(level, pos, EntitySpawnReason.COMMAND);
+        Entity entity = EntityTypes.ZOMBIE.spawn(level, pos, EntitySpawnReason.COMMAND);
         if (!(entity instanceof Zombie zombie)) {
             source.sendSuccess(() -> Component.literal("Failed to spawn smart zombie."), false);
             return 0;
@@ -116,7 +117,7 @@ public final class SmartMobsEvents {
             return;
         }
 
-        if (zombie.getType() != EntityType.ZOMBIE) return;
+        if (zombie.getType() != EntityTypes.ZOMBIE) return;
         if (isSmartMobZombie(zombie) || ZombieBreeds.isBreed(zombie)) return;
         double roll = zombie.getRandom().nextDouble();
         if (roll < froz8n.Config.gardenChance) makeGarden(zombie);
@@ -129,7 +130,7 @@ public final class SmartMobsEvents {
         if (entity.level().isClientSide()) {
             // The humanoid renderer builds swimAmount locally from this pose. Keep it
             // in step with the server so zombies use the swimming model animation.
-            if (entity instanceof Zombie zombie && zombie.getType() == EntityType.ZOMBIE) syncSwimmingPose(zombie);
+            if (entity instanceof Zombie zombie && zombie.getType() == EntityTypes.ZOMBIE) syncSwimmingPose(zombie);
             return;
         }
         if (entity instanceof Zombie zombie) {
@@ -139,7 +140,7 @@ public final class SmartMobsEvents {
                 zombie.discard();
                 return;
             }
-            if (zombie.getType() != EntityType.ZOMBIE) return;
+            if (zombie.getType() != EntityTypes.ZOMBIE) return;
             clearLegacyBoxZombie(zombie);
             boolean smartMob = isSmartMobZombie(zombie);
             if (smartMob) {
@@ -225,7 +226,7 @@ public final class SmartMobsEvents {
     }
 
     /** Cancels the break of blocks placed by smart mobs so they never drop items. */
-    private static void onBlockBreak(BlockEvent.BreakEvent event) {
+    private static void onBlockBreak(BreakBlockEvent event) {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }

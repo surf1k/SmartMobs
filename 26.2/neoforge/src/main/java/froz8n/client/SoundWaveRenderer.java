@@ -26,7 +26,7 @@ public final class SoundWaveRenderer {
         if(mc.level==null)return;
         long now=System.currentTimeMillis();
         STARTS.entrySet().removeIf(e->now-e.getValue()>3100);
-        Vec3 camera=mc.gameRenderer.getMainCamera().position();
+        Vec3 camera=mc.gameRenderer.mainCamera().position();
         for(var entry:STARTS.entrySet()){
             Entity source=mc.level.getEntity(entry.getKey());
             if(source==null)continue;

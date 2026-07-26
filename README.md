@@ -103,6 +103,29 @@ with no exceptions. What it does *not* cover is anything that needs a hand on th
 HUD and its key bindings, the rooted-input cancel and the knock-down animation are compile- and
 load-verified only.
 
+
+## The 26.x line
+
+Minecraft 26.x changed two rules that every mod has to deal with:
+
+- **The game ships deobfuscated.** The 26.2 client jar contains `net/minecraft/world/entity/monster/zombie/Zombie.class`
+  verbatim, the version manifest carries no `client_mappings`, and Fabric has published no intermediary or
+  yarn past 1.21.11. There is nothing left to remap.
+- **It runs on Java 25.** A private Temurin 25 lives in `.jdk25/` (git-ignored) next to the Java 21 one.
+
+API drift from 1.21.11 is small and mechanical: `EntityType.ZOMBIE` moved to `EntityTypes.ZOMBIE`,
+`Level.random` is now `getRandom()`, `GameRenderer.getMainCamera()` is `mainCamera()`,
+`Player.displayClientMessage(text, true)` is `sendOverlayMessage(text)`, `HumanoidModel.setAllVisible` is gone,
+NeoForge's `BlockEvent.BreakEvent` became `BreakBlockEvent`, and the HUD draws through
+`GuiGraphicsExtractor.text(...)` instead of `GuiGraphics.drawString(...)`.
+
+| Folder | State |
+| --- | --- |
+| `26.2/neoforge` | **Builds.** NeoForge 26.2.0.35-beta, jar produced. |
+| `26.2/forge` | Blocked upstream: MC 26.2 needs a Java 25 toolchain, which needs Gradle 9, and the newest ForgeGradle (6.0.54) still dies on Gradle 9 / class file 69. |
+| `26.2/fabric` | Blocked upstream: Loom 1.18-alpha still demands a mappings dependency, and `officialMojangMappings()` fails because Mojang publishes none for 26.2. |
+| `26.2/quilt` | Waits on the same Loom fix. |
+
 ## Licence
 
 All rights reserved (see `mod_license` in each `gradle.properties`).

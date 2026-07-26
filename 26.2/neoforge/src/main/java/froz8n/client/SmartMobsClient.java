@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -53,7 +54,7 @@ public final class SmartMobsClient {
 
     @SubscribeEvent
     static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(EntityType.ZOMBIE, SwimmingZombieRenderer::new);
+        event.registerEntityRenderer(EntityTypes.ZOMBIE, SwimmingZombieRenderer::new);
     }
 
     @SubscribeEvent

@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
 
 import java.util.function.Function;
@@ -34,7 +35,7 @@ public final class SmartMobsClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(CardboardBoxModel.LAYER, CardboardBoxModel::createLayer);
 
         // Replaces the vanilla zombie renderer with the swimming-aware one.
-        EntityRendererRegistry.register(EntityType.ZOMBIE, SwimmingZombieRenderer::new);
+        EntityRendererRegistry.register(EntityTypes.ZOMBIE, SwimmingZombieRenderer::new);
 
         // The Fabric counterpart of Forge's IClientItemExtensions#getHumanoidArmorModel.
         registerHat(SmartMobs.MINING_HELMET, MiningHelmetModel.LAYER, MiningHelmetModel::new, "mining_helmet");
