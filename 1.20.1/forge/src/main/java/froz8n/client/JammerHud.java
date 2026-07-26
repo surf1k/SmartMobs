@@ -1,17 +1,18 @@
 package froz8n.client;
 
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 
 public final class JammerHud {
     private static int mode; private static long downReady,upReady;
     private JammerHud(){}
-    public static void addLayer(AddGuiOverlayLayersEvent e){e.getLayeredDraw().add(
-            new ResourceLocation("smartmobs","jammer_hud"),JammerHud::render);}
+    // 1.20.1 Forge still has the overlay list, not a layered-draw tree.
+    public static void addLayer(RegisterGuiOverlaysEvent e){
+        e.registerAboveAll("jammer_hud",(gui,graphics,partialTick,width,height)->render(graphics,partialTick));
+    }
     public static void update(int newMode,int downTicks,int upTicks){mode=newMode;long now=System.currentTimeMillis();downReady=now+downTicks;upReady=now+upTicks;}
     public static void selectLocal(int newMode){mode=newMode;}
     private static void render(GuiGraphics g,float partialTick){

@@ -21,6 +21,9 @@ The player-facing description (the text used for the Modrinth page) lives in [MO
 | `quilt/` | Quilt Loader 0.30.0 (compiles the Fabric sources) | Quilt Loom 1.15 |
 | `neoforge/` | NeoForge 21.11.44 | ModDevGradle 2.0 |
 | `forge/` | MinecraftForge 61.1.0 | ForgeGradle 6 |
+| `1.21.1/` | the same three loaders, one Minecraft version back | see below |
+| `1.20.1/` | Fabric and Forge for the oldest supported version | see below |
+| `26.2/` | the next Minecraft line (partly blocked upstream) | see below |
 | `branding/` | mod icon (512 and 128 px) | — |
 | `dist/` | jars renamed per loader, ready to upload (git-ignored) | — |
 | `run/` | the old Forge dev game directory, left untouched | — |
@@ -103,6 +106,37 @@ with no exceptions. What it does *not* cover is anything that needs a hand on th
 HUD and its key bindings, the rooted-input cancel and the knock-down animation are compile- and
 load-verified only.
 
+
+## Older Minecraft lines
+
+The gameplay packages (`froz8n.smart`, `froz8n.combat`, `froz8n.block`) are copied over
+byte-identical; every version folder only rewrites the loader edges and whatever vanilla
+changed. What actually differs, going back:
+
+| Concern | 1.21.11 | 1.21.1 | 1.20.1 |
+| --- | --- | --- | --- |
+| Armour | equipment asset | registered `ArmorMaterial` + `ArmorItem` | `ArmorMaterial` is a bare interface |
+| Armour texture | `<ns>:<name>` asset | `.../models/armor/<name>_layer_1.png` | same, but Fabric needs `ArmorRenderer` and Forge needs `getArmorTexture` |
+| NBT reads | `tag.getIntOr(...)` | `froz8n.data.Nbt` shim | same shim |
+| Effects / attributes | `Holder<…>` | `Holder<…>` | plain objects |
+| Item use | `InteractionResult` | `InteractionResultHolder` | `InteractionResultHolder`, tooltip takes a `Level` |
+| Fabric networking | `PayloadTypeRegistry` | `PayloadTypeRegistry` | channel id + raw `FriendlyByteBuf` |
+| Forge event bus | EventBus 7 (`Event.BUS`) | EventBus 6 (`MinecraftForge.EVENT_BUS`) | EventBus 6 |
+| Forge networking | payload channel | payload channel | numbered `SimpleChannel` |
+| Forge HUD | `AddGuiOverlayLayersEvent` | `AddGuiOverlayLayersEvent` | `RegisterGuiOverlaysEvent` |
+| Vertices | submit pipeline | `RenderType` + buffer source | `vertex/color/normal/endVertex` |
+| Toolchain | Java 21 | Java 21 | Java 21 compiling `--release 17` |
+
+| Folder | State |
+| --- | --- |
+| `1.21.1/fabric` | **Builds**, dev client boots clean |
+| `1.21.1/neoforge` | **Builds**, dev client boots clean |
+| `1.21.1/forge` | **Builds**, dev client boots clean |
+| `1.20.1/fabric` | **Builds**, dev client boots clean |
+| `1.20.1/forge` | in progress |
+
+Gradle 8.10 cannot read class file 68, so these projects need `JAVA_HOME` pointed at the
+private JDK: `JAVA_HOME=D:/SmartMobs/.jdk21/jdk-21.0.11+10`.
 
 ## The 26.x line
 

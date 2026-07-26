@@ -16,8 +16,9 @@ public final class SwimmingZombieRenderer extends ZombieRenderer {
 
     @Override
     protected void setupRotations(Zombie entity, PoseStack poseStack, float ageInTicks, float yBodyRot,
-                                  float partialTick, float scale) {
-        super.setupRotations(entity, poseStack, ageInTicks, yBodyRot, partialTick, scale);
+                                  float partialTick) {
+        super.setupRotations(entity, poseStack, ageInTicks, yBodyRot, partialTick);
+        float scale = 1.0F;
         float swimAmount = entity.getSwimAmount(partialTick);
         if (swimAmount > 0.0F) {
             float targetPitch = -82.0F - entity.getXRot();

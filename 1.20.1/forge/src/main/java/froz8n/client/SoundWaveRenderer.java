@@ -31,9 +31,7 @@ public final class SoundWaveRenderer {
         Vec3 camera=event.getCamera().getPosition();
         MultiBufferSource.BufferSource buffers=mc.renderBuffers().bufferSource();
         VertexConsumer consumer=buffers.getBuffer(RenderType.debugQuads());
-        // Forge 52 hands out the raw model-view matrix here, not a PoseStack.
-        PoseStack pose=new PoseStack();
-        pose.mulPose(event.getPoseStack());
+        PoseStack pose=event.getPoseStack();
         for(var entry:STARTS.entrySet()){
             Entity source=mc.level.getEntity(entry.getKey());
             if(source==null)continue;

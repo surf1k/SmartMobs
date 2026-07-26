@@ -2,53 +2,45 @@ package froz8n.smart.viz;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Minimal clientbound channel that streams a smart zombie's pathfinding plan to
+ * Minimal clientbound message that streams a smart zombie's pathfinding plan to
  * players tracking it, for the debug overlay ("/spawnsmart zombie path").
+ * It rides the jammer channel rather than opening a second one.
  */
 public final class PathVizNetwork {
 
-    private static final int PROTOCOL = 1;
-    public static final SimpleChannel CHANNEL = ChannelBuilder
-            .named(new ResourceLocation("smartmobs", "pathviz"))
-            .networkProtocolVersion(PROTOCOL)
-            .optional()
-            .simpleChannel();
+    public record Payload(PathVizData data) {}
+
+    private static SimpleChannel channel;
 
     private PathVizNetwork() {
     }
 
-    /** Registers the message. Call once during common setup. */
-    public static void register() {
-        CHANNEL.messageBuilder(PathVizData.class)
-                .direction(PacketFlow.CLIENTBOUND)
-                .encoder(PathVizNetwork::encode)
-                .decoder(PathVizNetwork::decode)
-                .consumerMainThread((msg, ctx) -> {
-                    // Runs on the client main thread.
-                    org.slf4j.LoggerFactory.getLogger("smartmobs-viz")
-                            .info("CLIENT received path: entity={} cells={}", msg.entityId, msg.cells.size());
-                    ClientPathStore.put(msg);
-                    ctx.setPacketHandled(true);
-                })
-                .add();
+    /** Registered from {@code SoundWaveNetwork.register()} with the next free message id. */
+    public static void register(SimpleChannel simpleChannel, int id) {
+        channel = simpleChannel;
+        channel.messageBuilder(Payload.class, id, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder((m, b) -> encode(m.data(), b))
+                .decoder(b -> new Payload(decode(b)))
+                .consumerMainThread((m, c) -> {
+                    ClientPathStore.put(m.data());
+                    c.get().setPacketHandled(true);
+                }).add();
     }
 
     /** Sends the given plan to every player currently tracking the entity. */
-    public static void sendToTrackers(Entity entity, PathVizData data) {
+    public static void sendToTrackers(net.minecraft.world.entity.Entity entity, PathVizData data) {
+        if (channel == null) return;
         org.slf4j.LoggerFactory.getLogger("smartmobs-viz")
                 .info("SERVER sending path: entity={} cells={}", data.entityId, data.cells.size());
-        CHANNEL.send(data, PacketDistributor.TRACKING_ENTITY.with(entity));
+        channel.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), new Payload(data));
     }
 
     private static void encode(PathVizData data, FriendlyByteBuf buf) {

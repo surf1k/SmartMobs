@@ -333,8 +333,10 @@ public final class DiggingPathfinder {
     }
 
     private static boolean passable(ServerLevel level, int x, int y, int z) {
-        BlockState s = level.getBlockState(new BlockPos(x, y, z));
-        return (s.isAir() || (!s.blocksMotion() && s.isPathfindable(PathComputationType.LAND)))
+        BlockPos pos = new BlockPos(x, y, z);
+        BlockState s = level.getBlockState(pos);
+        // 1.20.1 still passes the level and position into isPathfindable.
+        return (s.isAir() || (!s.blocksMotion() && s.isPathfindable(level, pos, PathComputationType.LAND)))
                 && s.getFluidState().isEmpty();
     }
 

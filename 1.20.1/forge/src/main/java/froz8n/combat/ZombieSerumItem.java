@@ -18,7 +18,7 @@ public final class ZombieSerumItem extends Item {
     @Override public InteractionResultHolder<ItemStack> use(Level level,Player player,InteractionHand hand){
         return ItemUtils.startUsingInstantly(level,player,hand);
     }
-    @Override public int getUseDuration(ItemStack stack,LivingEntity entity){return 32;}
+    @Override public int getUseDuration(ItemStack stack){return 32;}
     @Override public UseAnim getUseAnimation(ItemStack stack){return UseAnim.DRINK;}
     @Override public ItemStack finishUsingItem(ItemStack stack,Level level,LivingEntity entity){
         if(entity instanceof Player player){
@@ -32,7 +32,7 @@ public final class ZombieSerumItem extends Item {
         }
         return stack;
     }
-    @Override public void appendHoverText(ItemStack stack,TooltipContext context,
+    @Override public void appendHoverText(ItemStack stack,net.minecraft.world.level.Level level,
                                           List<Component> tooltip,TooltipFlag flag){
         tooltip.add(Component.translatable("item.smartmobs.zombie_serum.desc.1").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.smartmobs.zombie_serum.desc.2").withStyle(ChatFormatting.GRAY));

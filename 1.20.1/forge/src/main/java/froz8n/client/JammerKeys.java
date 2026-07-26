@@ -24,7 +24,7 @@ public final class JammerKeys {
         if(mc.player==null||!shift
                 ||(!mc.player.getMainHandItem().is(SmartMobs.SOUND_JAMMER.get())
                 &&!mc.player.getOffhandItem().is(SmartMobs.SOUND_JAMMER.get())))return;
-        int mode=event.getDeltaY()>0?0:1;
+        int mode=event.getScrollDelta()>0?0:1;
         JammerHud.selectLocal(mode);setMode(mode);
         event.setCanceled(true);
     }

@@ -311,7 +311,7 @@ public final class ZombieBreeds {
     }
 
     private static void setAttribute(LivingEntity entity,
-                                     net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+                                     net.minecraft.world.entity.ai.attributes.Attribute attribute,
                                      double value) {
         AttributeInstance instance = entity.getAttribute(attribute);
         if (instance != null) instance.setBaseValue(value);

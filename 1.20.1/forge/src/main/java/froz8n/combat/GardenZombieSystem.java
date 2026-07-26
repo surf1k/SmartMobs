@@ -95,8 +95,8 @@ public final class GardenZombieSystem {
         horse.equipSaddle(null);
         var movement=horse.getAttribute(Attributes.MOVEMENT_SPEED);
         if(movement!=null)movement.setBaseValue(.34);
-        var step=horse.getAttribute(Attributes.STEP_HEIGHT);
-        if(step!=null)step.setBaseValue(1.0);
+        // 1.20.1 has no step-height attribute; the field is set directly.
+        horse.setMaxUpStep(1.0F);
         var health=horse.getAttribute(Attributes.MAX_HEALTH);
         if(health!=null){health.setBaseValue(30);horse.setHealth(30);}
         level.addFreshEntity(horse);

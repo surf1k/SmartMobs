@@ -52,7 +52,7 @@ public final class SoundJammerItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, net.minecraft.world.level.Level level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("item.smartmobs.sound_jammer.desc.1").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.smartmobs.sound_jammer.desc.2").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("item.smartmobs.sound_jammer.desc.3").withStyle(ChatFormatting.GRAY));

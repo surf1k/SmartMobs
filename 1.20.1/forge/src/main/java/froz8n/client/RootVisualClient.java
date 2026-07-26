@@ -33,7 +33,7 @@ public final class RootVisualClient {
                     .setValue(froz8n.block.GraspingRootsBlock.ROTATION,rotation);
             FallingBlockEntity entity=new FallingBlockEntity(mc.level,x,groundY-1.0,z,state);
             entity.setNoGravity(true);entity.noPhysics=true;entity.disableDrop();entity.setDeltaMovement(Vec3.ZERO);
-            mc.level.addEntity(entity);ROOTS.add(new Root(entity,x,groundY,z,born,duration,random.nextFloat()*2.2F));
+            mc.level.putNonPlayerEntity(entity.getId(),entity);ROOTS.add(new Root(entity,x,groundY,z,born,duration,random.nextFloat()*2.2F));
         }
         // A clearly audible, low earthen burst. Packet delivery means every nearby
         // client hears it at the same world position, including observers.
