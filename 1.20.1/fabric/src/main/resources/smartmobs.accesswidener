@@ -1,0 +1,5 @@
+accessWidener	v2	named
+
+# Client-side root visuals build FallingBlockEntity instances directly.
+# Forge did this with META-INF/accesstransformer.cfg.
+accessible	method	net/minecraft/world/entity/item/FallingBlockEntity	<init>	(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/level/block/state/BlockState;)V

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": ["IRI", "RCR", "III"],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "R": { "item": "minecraft:redstone" },
+    "C": { "item": "minecraft:amethyst_shard" }
+  },
+  "result": { "item": "smartmobs:sound_jammer", "count": 1 }
+}

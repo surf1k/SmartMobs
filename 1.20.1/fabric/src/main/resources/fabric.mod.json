@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_authors}"
+  ],
+  "license": "${mod_license}",
+  "icon": "assets/smartmobs/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "froz8n.SmartMobs"
+    ],
+    "client": [
+      "froz8n.client.SmartMobsClient"
+    ]
+  },
+  "mixins": [
+    "smartmobs.mixins.json",
+    {
+      "config": "smartmobs.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "smartmobs.accesswidener",
+  "depends": {
+    "fabricloader": "${loader_version_range}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version_range}",
+    "java": ">=17"
+  }
+}
