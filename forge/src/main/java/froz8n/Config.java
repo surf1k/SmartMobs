@@ -39,14 +39,14 @@ public class Config {
             .comment("Whether miners may tunnel through blocks at all")
             .define("allowDigging", true);
     private static final ForgeConfigSpec.DoubleValue MAX_DIG_HARDNESS = BUILDER
-            .comment("Blocks with a higher destroy speed than this are never mined (obsidian is 50)")
-            .defineInRange("maxDigHardness", 5.0, 0.0, 100.0);
+            .comment("Hardness ceiling for mining. Negative means no ceiling, which is the default")
+            .defineInRange("maxDigHardness", -1.0, -1.0, 100.0);
     private static final ForgeConfigSpec.BooleanValue BREAK_PORTALS = BUILDER
             .comment("Whether miners break nether portal frames they can see")
             .define("breakPortals", false);
     private static final ForgeConfigSpec.BooleanValue SUNLIGHT_IMMUNITY = BUILDER
-            .comment("Whether mod zombies ignore daylight. Off means vanilla burning rules apply")
-            .define("sunlightImmunity", false);
+            .comment("Whether mod zombies ignore daylight. They wear helmets, so on by default")
+            .define("sunlightImmunity", true);
     private static final ForgeConfigSpec.BooleanValue ENABLE_BREEDS = BUILDER
             .comment("Whether the six lesser breeds spawn at all")
             .define("enableBreeds", true);
@@ -60,9 +60,9 @@ public class Config {
     public static double nightMoveSpeed = 0.30;
     public static int detectionRange = 32;
     public static boolean allowDigging = true;
-    public static double maxDigHardness = 5.0;
+    public static double maxDigHardness = -1.0;
     public static boolean breakPortals = false;
-    public static boolean sunlightImmunity = false;
+    public static boolean sunlightImmunity = true;
     public static boolean enableBreeds = true;
 
     @SubscribeEvent

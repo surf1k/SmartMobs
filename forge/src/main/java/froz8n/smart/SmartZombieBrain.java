@@ -999,10 +999,11 @@ public final class SmartZombieBrain {
         if (!froz8n.Config.allowDigging) return false;
         BlockState s = level.getBlockState(pos);
         float hardness = s.getDestroySpeed(level, pos);
-        // Anything tougher than the configured cap is simply out of reach: an obsidian
-        // or deepslate-brick shell now actually keeps them out.
+        // No hardness ceiling by default: a cap just means "wall yourself in with the one
+        // block they cannot chew" and the mod is over. Set maxDigHardness >= 0 to opt in.
+        if (froz8n.Config.maxDigHardness >= 0.0 && hardness > froz8n.Config.maxDigHardness) return false;
         return !s.isAir() && s.getFluidState().isEmpty()
-                && hardness >= 0.0F && hardness <= froz8n.Config.maxDigHardness && s.blocksMotion();
+                && hardness >= 0.0F && s.blocksMotion();
     }
 
     private static double horizTo(Zombie z, BlockPos pos) {

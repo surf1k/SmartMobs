@@ -1,13 +1,13 @@
 # SmartMobs
 
-Zombies that plan a route, mine through walls, pillar, bridge, parkour and hunt in packs, six lesser breeds
+Zombies that plan a route, mine through walls, pillar, bridge, parkour and hunt in packs, seven lesser breeds
 that make an ordinary night interesting — plus three items to fight back with. Minecraft **1.21.11**, built
 for every current loader from one shared design.
 
 Difficulty is tuned to be survivable and every number is config: miners are 12% of spawns (was 35%), they
-carry a plain pickaxe instead of an Efficiency V one, cannot mine anything harder than the configured cap,
-notice you at 32 blocks instead of 128, no longer ignore daylight and no longer break nether portals unless
-you turn that back on.
+carry a plain pickaxe instead of an Efficiency V one,
+notice you at 32 blocks instead of 128 and no longer break nether portals unless you turn that back on. They
+still ignore daylight - they are wearing helmets - and there is still no block they cannot eventually mine.
 
 ![icon](branding/icon.png)
 

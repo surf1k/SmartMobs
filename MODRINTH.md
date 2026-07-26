@@ -13,16 +13,16 @@ Minecraft **1.21.11** · Fabric · Quilt · NeoForge · Forge
 ## The miner zombie
 
 About one in eight zombies spawns wearing a battered **mining helmet**. That one is a problem — but a
-problem you can outrun, wall off and wait out until sunrise.
+problem you can outrun and shake loose, not one that ignores every wall you own.
 
 - **Real pathfinding.** A Baritone-style 3D A\* planner builds a route out of *typed movements* — walk,
   diagonal, step up, step down, descend, drop, dig, pillar, bridge, parkour jump. The zombie then executes
   each movement to completion instead of guessing from nearby blocks, so it never pillars on flat ground and
   never freezes one block below you.
 - **It mines — slowly.** Blocks are broken progressively, with the vanilla cracking overlay, hit sounds and
-  a plain iron pickaxe in hand. Anything tougher than stone-tier is out of its reach entirely, so an
-  obsidian or deepslate shell keeps it out. Head-height obstacles in a one-block tunnel are cleared
-  properly — the classic "digs at its feet forever" bug does not exist here.
+  a plain iron pickaxe in hand. There is no material it cannot eventually get through: obsidian just takes
+  it a very long time. Head-height obstacles in a one-block tunnel are cleared properly — the classic
+  "digs at its feet forever" bug does not exist here.
 - **It builds.** Pillars up block by block underneath itself and bridges over gaps using cobblestone, dirt,
   stone, cobbled deepslate or tuff. **Everything a mob places is temporary**: it disappears after 30 seconds
   and drops nothing if you break it, so your world does not fill up with zombie scaffolding.
@@ -38,8 +38,7 @@ problem you can outrun, wall off and wait out until sunrise.
   out of the water on the far side.
 - **No babies.** Baby zombies never spawn. Ever.
 
-Daylight still works: only the hat wearers survive the morning, exactly as vanilla treats a zombie with a
-head item. Everything else burns.
+They do not burn at dawn — they are wearing helmets. Waiting for sunrise is not a plan.
 
 ## The garden zombie
 
@@ -55,8 +54,8 @@ Roughly one in sixteen zombies wears a **straw hat** — and it does not want to
 
 ## The lesser breeds
 
-Roughly one plain zombie in three rolls one of six cheap variants. None of them digs, builds or outruns you,
-none wears a helmet — so all six burn at dawn. You tell them apart by what they are carrying.
+Roughly one plain zombie in three rolls one of seven cheap variants. None of them digs, builds or outruns
+you. You tell them apart by what they are carrying — except the last one, which you cannot see at all.
 
 | Breed | Carries | What it does |
 | --- | --- | --- |
@@ -66,13 +65,15 @@ none wears a helmet — so all six burn at dawn. You tell them apart by what the
 | **Thief** | your stuff | Steals one stack out of your hotbar, stops fighting and runs for it. Kill it and you get the stack back. |
 | **Medic** | glass bottle | Heals wounded zombies around it and barely fights. |
 | **Sapper** | gunpowder | Detonates when killed. The blast hurts whoever is standing next to it and does not touch a single block. |
+| **Ghost** | nothing — it is invisible | Drifts straight **through walls** at a crawl, trailing soul flame. Slower than walking, so you can leave; a closed door is not an answer. 5 hearts. |
 
 ## Tuning it yourself
 
 Everything above is config (`config/smartmobs.json` on Fabric and Quilt, `smartmobs-common.toml` on NeoForge
 and Forge): spawn shares for miners, garden zombies and breeds, day and night speed, detection range,
-whether digging is allowed at all, the hardness ceiling for what they can mine, whether they break nether
-portals (**off** by default now), whether they ignore daylight (off), and a master switch for the breeds.
+whether digging is allowed at all, an optional hardness ceiling (none by default), whether they break nether
+portals (**off**), whether they ignore daylight (**on** - they are wearing helmets), and a master switch for
+the breeds.
 
 ## Your side of the fight
 
@@ -119,8 +120,8 @@ vanilla zombies only — modded mobs are left alone.
 - **Настоящий поиск пути.** 3D A\* в стиле Baritone строит маршрут из *типизированных движений*: шаг,
   диагональ, подъём, спуск, падение, копка, столб, мост, паркур-прыжок. Каждое движение выполняется до
   конца, поэтому зомби не столбит на ровном месте и не зависает на блок ниже тебя.
-- **Копает медленно**: обычной железной киркой, с ванильными трещинами и звуками. Всё, что твёрже камня,
-  ему не по зубам — обсидиановая или глубосланцевая скорлупа его не пускает. Блок на уровне головы в
+- **Копает медленно**: обычной железной киркой, с ванильными трещинами и звуками. Непроходимого материала нет —
+  обсидиан просто занимает очень долго. Блок на уровне головы в
   одноблочном тоннеле убирается корректно.
 - **Строит**: столбит под собой и мостит пропасти булыжником, землёй, камнем, глубосланцем или туфом.
   **Всё, что поставил моб, — временное**: исчезает через 30 секунд и не выпадает при разрушении.
@@ -134,8 +135,7 @@ vanilla zombies only — modded mobs are left alone.
 - **Плавает** за игроком с нормальной анимацией и выбирается на берег.
 - **Детёныши зомби не спавнятся вообще.**
 
-Солнце снова работает: утро переживают только те, кто в головном уборе — это ванильное правило для зомби
-со шлемом. Все остальные горят.
+На рассвете они не горят — на них каски. Пересидеть до утра не выйдет.
 
 ### Садовый зомби (~6% спавнов, в соломенной шляпе)
 
@@ -148,9 +148,9 @@ vanilla zombies only — modded mobs are left alone.
 
 ### Мелкие породы
 
-Примерно каждый третий обычный зомби получает одну из шести дешёвых вариаций. Никто из них не копает, не
-строит и не обгоняет игрока, и ни на ком нет шлема — значит, все шестеро горят на рассвете. Различаются
-тем, что держат в руке.
+Примерно каждый третий обычный зомби получает одну из семи дешёвых вариаций. Никто из них не копает, не
+строит и не обгоняет игрока. Различаются тем, что держат в руке — кроме
+последнего, которого просто не видно.
 
 | Порода | В руке | Что делает |
 | --- | --- | --- |
@@ -160,13 +160,14 @@ vanilla zombies only — modded mobs are left alone.
 | **Воришка** | твоё добро | Крадёт стак из хотбара, перестаёт драться и убегает. Убьёшь — вернёшь стак. |
 | **Лекарь** | стеклянная бутылка | Лечит раненых зомби вокруг, сам почти не дерётся. |
 | **Подрывник** | порох | Взрывается при смерти. Задевает того, кто стоит рядом, и не трогает ни одного блока. |
+| **Призрак** | ничего, он невидим | Медленно плывёт **сквозь стены**, оставляя след из душевого пламени. Медленнее шага, так что уйти можно; закрытая дверь — не ответ. 5 сердец. |
 
 ### Настройка
 
 Всё вышеперечисленное — конфиг (`config/smartmobs.json` на Fabric и Quilt, `smartmobs-common.toml` на
 NeoForge и Forge): доли спавна шахтёров, садовых и пород, скорость днём и ночью, радиус обнаружения,
-разрешена ли копка вообще, потолок твёрдости блоков, ломают ли они рамку портала (**по умолчанию нет**),
-игнорируют ли солнце (нет) и общий выключатель пород.
+разрешена ли копка вообще, потолок твёрдости (по умолчанию его нет), ломают ли они рамку портала
+(**по умолчанию нет**), игнорируют ли солнце (**да**) и общий выключатель пород.
 
 ### Что даётся игроку
 

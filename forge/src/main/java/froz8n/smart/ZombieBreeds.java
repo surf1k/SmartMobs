@@ -33,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
  *   <li><b>thief</b> - snatches a stack out of your hotbar and runs; drops it when killed.</li>
  *   <li><b>medic</b> - patches up wounded zombies around it, barely fights.</li>
  *   <li><b>sapper</b> - detonates when killed, without touching the terrain.</li>
+ *   <li><b>ghost</b> - invisible, drifts straight through walls, marked only by soul flame.</li>
  * </ul>
  *
  * <p>This file is shared verbatim by the Fabric, Quilt, NeoForge and Forge trees: it only
@@ -43,6 +44,8 @@ public final class ZombieBreeds {
     public static final String BREED_KEY = "smartmobs_breed";
     private static final String THIEF_FLEE_UNTIL = "smartmobs_thief_flee_until";
     private static final String SCREAM_COOLDOWN = "smartmobs_scream_cooldown";
+    private static final String GHOST_NEXT_HIT = "smartmobs_ghost_next_hit";
+    private static final String SAPPER_SPENT = "smartmobs_sapper_spent";
 
     public static final String BRUTE = "brute";
     public static final String RUNNER = "runner";
@@ -50,8 +53,9 @@ public final class ZombieBreeds {
     public static final String THIEF = "thief";
     public static final String MEDIC = "medic";
     public static final String SAPPER = "sapper";
+    public static final String GHOST = "ghost";
 
-    private static final String[] ALL = {BRUTE, RUNNER, SCREAMER, THIEF, MEDIC, SAPPER};
+    private static final String[] ALL = {BRUTE, RUNNER, SCREAMER, THIEF, MEDIC, SAPPER, GHOST};
 
     private static final int SCREAM_RANGE = 16;
     private static final int SCREAM_RALLY_RANGE = 20;
@@ -60,6 +64,9 @@ public final class ZombieBreeds {
     private static final float MEDIC_HEAL = 2.0F;
     private static final int THIEF_FLEE_TICKS = 600;
     private static final float SAPPER_POWER = 1.8F;
+    private static final double GHOST_SPEED = 0.105;
+    private static final int GHOST_HIT_COOLDOWN = 25;
+    private static final float GHOST_DAMAGE = 3.0F;
 
     private ZombieBreeds() {
     }
@@ -114,6 +121,14 @@ public final class ZombieBreeds {
                 setAttribute(zombie, Attributes.ATTACK_DAMAGE, 2.0);
                 hold(zombie, Items.GUNPOWDER);
             }
+            case GHOST -> {
+                setMaxHealth(zombie, 10.0);
+                setAttribute(zombie, Attributes.ATTACK_DAMAGE, 3.0);
+                zombie.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
+                        MobEffectInstance.INFINITE_DURATION, 0, false, false, false));
+                zombie.setNoGravity(true);
+                zombie.noPhysics = true;
+            }
             default -> { }
         }
     }
@@ -127,7 +142,55 @@ public final class ZombieBreeds {
             case SCREAMER -> tickScreamer(level, zombie);
             case MEDIC -> tickMedic(level, zombie);
             case THIEF -> tickThief(level, zombie);
+            case GHOST -> tickGhost(level, zombie);
             default -> { }
+        }
+    }
+
+    /**
+     * The ghost drifts straight through walls at a crawl, invisible except for a thin
+     * trail of soul flame. It never suffocates - vanilla skips the in-wall check for a
+     * noPhysics entity - and it hits by hand, because no navigation survives phasing.
+     */
+    private static void tickGhost(ServerLevel level, Zombie zombie) {
+        zombie.noPhysics = true;
+        zombie.setNoGravity(true);
+        zombie.setNoActionTime(0);
+        if ((zombie.tickCount + zombie.getId()) % 4 == 0) {
+            level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, zombie.getX(), zombie.getY(0.6), zombie.getZ(),
+                    1, 0.18, 0.35, 0.18, 0.0);
+        }
+        if ((zombie.tickCount + zombie.getId()) % 90 == 0) {
+            level.playSound(null, zombie.blockPosition(), SoundEvents.SOUL_ESCAPE.value(),
+                    SoundSource.HOSTILE, 0.6F, 0.6F);
+        }
+
+        Player target = zombie.getTarget() instanceof Player p && p.isAlive() ? p
+                : level.getNearestPlayer(zombie, froz8n.Config.detectionRange);
+        if (target == null || target.isSpectator() || target.isCreative()
+                || froz8n.combat.ZombieSerumSystem.isMasked(target)) {
+            zombie.setDeltaMovement(zombie.getDeltaMovement().scale(0.5));
+            return;
+        }
+        zombie.setTarget(target);
+        zombie.getLookControl().setLookAt(target, 30.0F, 30.0F);
+
+        Vec3 toward = target.position().add(0.0, 0.35, 0.0).subtract(zombie.position());
+        double distance = toward.length();
+        if (distance > 1.2) {
+            // Deliberately slower than walking: you cannot outfight it, but you can walk away.
+            zombie.setDeltaMovement(toward.normalize().scale(GHOST_SPEED));
+            zombie.hurtMarked = true;
+        } else {
+            zombie.setDeltaMovement(Vec3.ZERO);
+            long now = level.getGameTime();
+            if (PersistentData.of(zombie).getLongOr(GHOST_NEXT_HIT, 0L) <= now) {
+                PersistentData.of(zombie).putLong(GHOST_NEXT_HIT, now + GHOST_HIT_COOLDOWN);
+                zombie.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                target.hurtServer(level, level.damageSources().mobAttack(zombie), GHOST_DAMAGE);
+                level.playSound(null, zombie.blockPosition(), SoundEvents.SOUL_ESCAPE.value(),
+                        SoundSource.HOSTILE, 0.9F, 1.4F);
+            }
         }
     }
 
@@ -221,6 +284,10 @@ public final class ZombieBreeds {
         if (!SAPPER.equals(breedOf(zombie))) return;
         if (!(zombie.level() instanceof ServerLevel level)) return;
         if (amount < zombie.getHealth()) return;
+        // The blast catches the sapper too, which would re-enter this handler; one detonation
+        // per zombie, flagged before the explosion goes off.
+        if (PersistentData.of(zombie).getBooleanOr(SAPPER_SPENT, false)) return;
+        PersistentData.of(zombie).putBoolean(SAPPER_SPENT, true);
         // Damage-free terrain: the blast hurts whoever is standing next to it, nothing else.
         level.explode(zombie, zombie.getX(), zombie.getY(0.5), zombie.getZ(),
                 SAPPER_POWER, Level.ExplosionInteraction.NONE);

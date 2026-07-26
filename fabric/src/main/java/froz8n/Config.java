@@ -41,12 +41,12 @@ public final class Config {
     public static int detectionRange = 32;
     /** Whether miners may tunnel through blocks at all. */
     public static boolean allowDigging = true;
-    /** Blocks with a higher destroy speed than this are never mined (obsidian is 50). */
-    public static double maxDigHardness = 5.0;
+    /** Hardness ceiling for mining. Negative means no ceiling, which is the default. */
+    public static double maxDigHardness = -1.0;
     /** Whether miners break nether portal frames they can see. */
     public static boolean breakPortals = false;
-    /** Whether mod zombies ignore daylight. Off means vanilla burning rules apply. */
-    public static boolean sunlightImmunity = false;
+    /** Whether mod zombies ignore daylight. They wear helmets, so on by default. */
+    public static boolean sunlightImmunity = true;
     /** Whether the six lesser breeds spawn at all. */
     public static boolean enableBreeds = true;
 
@@ -68,7 +68,7 @@ public final class Config {
             nightMoveSpeed = clamp(getDouble(json, "nightMoveSpeed", nightMoveSpeed), 0.05, 1.0);
             detectionRange = (int) clamp(getInt(json, "detectionRange", detectionRange), 8, 128);
             allowDigging = getBoolean(json, "allowDigging", allowDigging);
-            maxDigHardness = clamp(getDouble(json, "maxDigHardness", maxDigHardness), 0.0, 100.0);
+            maxDigHardness = clamp(getDouble(json, "maxDigHardness", maxDigHardness), -1.0, 100.0);
             breakPortals = getBoolean(json, "breakPortals", breakPortals);
             sunlightImmunity = getBoolean(json, "sunlightImmunity", sunlightImmunity);
             enableBreeds = getBoolean(json, "enableBreeds", enableBreeds);
