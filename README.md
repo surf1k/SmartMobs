@@ -2,7 +2,7 @@
 
 Zombies that plan a route, mine through walls, pillar, bridge, parkour and hunt in packs, seven lesser breeds
 that make an ordinary night interesting — plus three items to fight back with. Minecraft **1.21.11**,
-**1.21.1** and **1.20.1**, built for every current loader from one shared design.
+**1.21.1** and **1.20.1** on every current loader, and **26.2** on NeoForge, all from one shared design.
 
 Since 2.6 no zombie spawns plain: **20%** are miners, **10%** garden zombies and the remaining **70%** roll
 one of the seven breeds, each wearing its own headgear so you can read what is coming at you. Difficulty is
@@ -185,10 +185,25 @@ NeoForge's `BlockEvent.BreakEvent` became `BreakBlockEvent`, and the HUD draws t
 
 | Folder | State |
 | --- | --- |
-| `26.2/neoforge` | **Builds.** NeoForge 26.2.0.35-beta, jar produced. Carries the 2.6 spawn shares but not the breed hats yet — the loader edges for them are the only thing left to write. |
-| `26.2/forge` | Blocked upstream: MC 26.2 needs a Java 25 toolchain, which needs Gradle 9, and the newest ForgeGradle (6.0.54) still dies on Gradle 9 / class file 69. |
-| `26.2/fabric` | Blocked upstream: Loom 1.18-alpha still demands a mappings dependency, and `officialMojangMappings()` fails because Mojang publishes none for 26.2. The sources are complete, breed hats included — only the build is stuck. |
+| `26.2/neoforge` | **Builds and boots clean**, breed hats included. NeoForge 26.2.0.35-beta; shipped as a beta download for that reason. |
+| `26.2/forge` | Blocked upstream: MC 26.2 needs a Java 25 toolchain, which needs Gradle 9, and the newest ForgeGradle (6.0.54) still dies on Gradle 9 / class file 69. The sources carry the hats so the tree is ready the day that lands, but nothing in it has ever been compiled. |
+| `26.2/fabric` | Blocked upstream, and deeper than it looks — see below. |
 | `26.2/quilt` | Waits on the same Loom fix. |
+
+### What is actually behind the Fabric wall
+
+`officialMojangMappings()` fails with *Failed to find official mojang mappings for 26.2*, because the
+version manifest has no `client_mappings` and the game needs none. That wall can be climbed: hand Loom a
+`mappings/` jar holding an empty tiny v2 file whose two namespaces are `official` and `named`, and it sets
+Minecraft up and starts compiling.
+
+It is not worth keeping. Behind it sit about sixty compile errors — `KeyBindingHelper`,
+`EntityModelLayerRegistry`, `FabricItemGroup` and `WorldRenderEvents` have all moved in Fabric API
+0.155.2, `CameraRenderState` is gone from vanilla, and the networking play handlers were renamed — and,
+worse, the mixin annotation processor gives up with *Cannot remap modifiers because it does not exist in
+any of the targets*. A jar built through a fake mapping whose mixin remapping already misfires is not one
+to ship, so the tree stays on `officialMojangMappings()` and stays blocked until Loom handles a
+mappings-free Minecraft.
 
 ## Licence
 

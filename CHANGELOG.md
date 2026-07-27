@@ -1,3 +1,19 @@
+## 2.6 on Minecraft 26.2
+
+The same 2.6 - every spawn share, all seven breeds, every hat - now also runs on **26.2**, on
+**NeoForge**. Nothing about the mod changed; only the loader edges did.
+
+The download is marked **beta**, because the only NeoForge that exists for 26.2 is itself a beta
+(26.2.0.35-beta). Treat it as such.
+
+Fabric, Quilt and Forge on 26.2 are still waiting on their build tooling, not on the mod:
+
+- Fabric Loom cannot set up 26.2 at all - Mojang publishes no mappings for it, and the game now
+  ships deobfuscated so there are none to publish. Feeding Loom an empty identity mapping does get
+  it past that wall, and behind it sit about sixty compile errors of Fabric API drift plus a mixin
+  remapper that gives up, so that is not a shortcut worth shipping.
+- ForgeGradle still cannot read Java 25 class files, which 26.2 requires.
+
 ## 2.6 - no more plain zombies
 
 Minecraft 1.21.11, 1.21.1 and 1.20.1 on Fabric, Quilt, NeoForge and Forge.

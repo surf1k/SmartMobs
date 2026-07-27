@@ -1,0 +1,9 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "smartmobs:sapper_cap"
+      }
+    ]
+  }
+}

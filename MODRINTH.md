@@ -7,6 +7,7 @@ through your walls, pillars up to your rooftop base, bridges gaps, parkours acro
 friends. Then it gives you three tools to fight back.
 
 Minecraft **1.21.11 / 1.21.1 / 1.20.1** · Fabric · Quilt · NeoForge · Forge
+Minecraft **26.2** · NeoForge (beta)
 
 ---
 
@@ -112,6 +113,10 @@ NeoForge and Forge builds have no dependencies.
 Fabric API alongside it. There is no separate Quilt build because there is nothing loader-specific to write:
 the Fabric jar *is* the Quilt jar.
 
+**On 26.2 there is only a NeoForge file, and it is marked beta** — not because the mod is unfinished there
+(it is the same mod, hats and all), but because the only NeoForge that exists for 26.2 is itself a beta.
+Fabric, Quilt and Forge on 26.2 are waiting on their build tooling.
+
 Client **and** server both need the mod on a multiplayer world: the HUD, the knock-down animation and the
 root visuals are client-side, everything else runs on the server.
 
@@ -131,6 +136,7 @@ vanilla zombies only — modded mobs are left alone.
 даются три вещи, чтобы отбиваться.
 
 Minecraft **1.21.11 / 1.21.1 / 1.20.1** · Fabric · Quilt · NeoForge · Forge
+Minecraft **26.2** · NeoForge (бета)
 
 ### Обычных зомби больше нет
 
@@ -215,6 +221,10 @@ Forge для 1.21.1. Сборке под **Fabric** дополнительно �
 [Fabric API](https://modrinth.com/mod/fabric-api); NeoForge и Forge зависимостей не имеют.
 **Пользователям Quilt — файл Fabric**: Quilt Loader запускает его через слой совместимости, отдельной
 сборки нет.
+
+**Под 26.2 есть только файл NeoForge, и он помечен как бета** — не потому, что мод там недоделан (это тот
+же мод, со всеми шляпами), а потому, что единственный NeoForge для 26.2 сам бета. Fabric, Quilt и Forge на
+26.2 ждут своих сборочных инструментов.
 
 Для мультиплеера мод нужен и на клиенте, и на сервере: HUD, анимация
 падения и визуал корней — клиентские, остальное считает сервер.
