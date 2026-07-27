@@ -86,6 +86,27 @@ Jars land in `<loader>/build/libs/` already named per Minecraft version and load
 (`smartmobs-1.21.11-fabric-2.6.jar` and friends), and copies of all of them are collected in `dist/` for
 uploading.
 
+## Publishing
+
+Every buildable project carries a Minotaur `modrinth` block, so a release is one task per project, run
+from each loader folder with `MODRINTH_TOKEN` in the environment:
+
+```bash
+cd fabric && ./gradlew modrinth
+```
+
+That uploads one file as its own Modrinth version (`2.6+mc1.21.11-fabric` and friends); the Fabric file is
+tagged for Quilt as well. It does **not** touch the project description — the page body is a separate task
+that only the 1.21.11 Fabric project owns, so the text is written once per release:
+
+```bash
+cd fabric && ./gradlew modrinthSyncBody
+```
+
+Both read `MODRINTH.md` and `CHANGELOG.md` as UTF-8 explicitly. Do not drop that back to Groovy's
+`File#getText()`: this machine's default charset is cp1251 and the Russian half of the page arrives
+mangled.
+
 ## Running and testing
 
 `./gradlew runClient` in a loader folder launches that loader's dev client. Each project keeps its own
