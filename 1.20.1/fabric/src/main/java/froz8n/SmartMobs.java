@@ -14,10 +14,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -96,15 +94,6 @@ public final class SmartMobs implements ModInitializer {
     public static final MobEffect ZOMBIE_DISGUISE = Registry.register(
             BuiltInRegistries.MOB_EFFECT, new ResourceLocation(MODID, "zombie_disguise"),
             new froz8n.combat.ZombieDisguiseEffect(MobEffectCategory.BENEFICIAL, 0x71852A));
-
-    public static final Block EXAMPLE_BLOCK = registerBlock("example_block",
-            new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
-    public static final Item EXAMPLE_BLOCK_ITEM = registerItem("example_block",
-            new BlockItem(EXAMPLE_BLOCK, new Item.Properties()));
-
-    public static final Item EXAMPLE_ITEM = registerItem("example_item",
-            new Item(new Item.Properties().food(new FoodProperties.Builder()
-                    .alwaysEat().nutrition(1).saturationMod(2f).build())));
 
     // Creates a creative tab with the id "smartmobs:equipment" holding every public mod item.
     public static final CreativeModeTab EQUIPMENT_TAB = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,

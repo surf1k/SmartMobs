@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.entity.Entity;
@@ -19,10 +19,10 @@ import java.util.Map;
 public final class SoundWaveRenderer {
     private static final Map<Integer, Long> STARTS = new HashMap<>();
     private SoundWaveRenderer() {}
-    public static void register() { WorldRenderEvents.AFTER_ENTITIES.register(SoundWaveRenderer::render); }
+    public static void register() { LevelRenderEvents.COLLECT_SUBMITS.register(SoundWaveRenderer::render); }
     public static void activate(int playerId) { STARTS.put(playerId, System.currentTimeMillis()); }
 
-    private static void render(WorldRenderContext context) {
+    private static void render(LevelRenderContext context) {
         Minecraft mc=Minecraft.getInstance();
         if(mc.level==null||STARTS.isEmpty())return;
         long now=System.currentTimeMillis();
@@ -36,10 +36,10 @@ public final class SoundWaveRenderer {
                 float t=(age-pulse)/.48F;
                 if(t<0||t>1)continue;
                 float eased=1-(1-t)*(1-t), radius=.25F+4.75F*eased, alpha=(1-t)*(1-t);
-                PoseStack pose=context.matrices();
+                PoseStack pose=context.poseStack();
                 pose.pushPose();
                 pose.translate(source.getX()-camera.x,source.getY()-camera.y+.08,source.getZ()-camera.z);
-                context.commandQueue().submitCustomGeometry(pose,RenderTypes.debugQuads(),
+                context.submitNodeCollector().submitCustomGeometry(pose,RenderTypes.debugQuads(),
                         (p,c)->drawWave(p,c,radius,alpha));
                 pose.popPose();
             }

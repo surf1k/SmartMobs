@@ -78,11 +78,11 @@ public final class SoundWaveNetwork {
 
     /** Declares every payload on both sides and installs the one serverbound handler. */
     public static void register() {
-        PayloadTypeRegistry.playS2C().register(Start.TYPE, Start.CODEC);
-        PayloadTypeRegistry.playS2C().register(Status.TYPE, Status.CODEC);
-        PayloadTypeRegistry.playS2C().register(Rooted.TYPE, Rooted.CODEC);
-        PayloadTypeRegistry.playS2C().register(RootBurst.TYPE, RootBurst.CODEC);
-        PayloadTypeRegistry.playC2S().register(SetMode.TYPE, SetMode.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(Start.TYPE, Start.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(Status.TYPE, Status.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(Rooted.TYPE, Rooted.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(RootBurst.TYPE, RootBurst.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(SetMode.TYPE, SetMode.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(SetMode.TYPE, (payload, context) -> {
             ServerPlayer player = context.player();

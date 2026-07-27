@@ -1,3 +1,15 @@
+## 2.6.1 - Fabric and Quilt on 26.2, and two ghosts evicted
+
+**26.2 now has a Fabric file**, which Quilt Loader runs as well - so the newest Minecraft is down to
+one loader still waiting on its build tooling instead of three. Both 26.2 downloads stay marked
+**beta**: it is a brand new Minecraft line, and neither jar has had a night of actual play.
+
+Every version also loses two leftovers. `smartmobs:example_block` and `smartmobs:example_item` came
+from the mod template, were never given a model, and were never in the creative tab - all they ever
+did was put two "Unable to load model" warnings in your log every launch. They are gone from all
+eleven trees. Nothing else about the mod changed; if you have neither of those in a world (and you
+do not, they were not obtainable), 2.6.1 is a drop-in replacement for 2.6.
+
 ## 2.6 on Minecraft 26.2
 
 The same 2.6 - every spawn share, all seven breeds, every hat - now also runs on **26.2**, on

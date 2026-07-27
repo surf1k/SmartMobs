@@ -49,9 +49,31 @@ repositories {
     // Loom adds the Fabric and Mojang repositories automatically.
 }
 
+/**
+ * Minecraft 26.x ships deobfuscated: the client jar carries
+ * net/minecraft/world/entity/monster/zombie/Zombie.class verbatim, the version manifest has no
+ * client_mappings, and Fabric publishes no intermediary past 1.21.11. There is nothing to remap,
+ * but Loom still requires a mappings dependency - officialMojangMappings() fails outright with
+ * "Failed to find official mojang mappings for 26.2".
+ *
+ * So hand it the identity: a tiny v2 file with the two namespaces and no entries. Every name
+ * passes through untouched, which is exactly right for a game that is already deobfuscated.
+ * Generated rather than committed, so the one thing in it stays readable here.
+ */
+def identityMappings = layout.buildDirectory.file('identity-mappings.jar').get().asFile
+identityMappings.parentFile.mkdirs()
+new java.util.zip.ZipOutputStream(identityMappings.newOutputStream()).withCloseable { zip ->
+    zip.putNextEntry(new java.util.zip.ZipEntry('mappings/mappings.tiny'))
+    // Loom's source remapper insists on an 'intermediary' namespace even with
+    // useIntermediateMappings = false, so all three are declared and all three are the same.
+    def header = ['tiny', '2', '0', 'official', 'intermediary', 'named'].join(String.valueOf((char) 9)) + (char) 10
+    zip.write(header.getBytes('UTF-8'))
+    zip.closeEntry()
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.officialMojangMappings()
+    mappings files(identityMappings)
 
     modImplementation "net.fabricmc:fabric-loader:${loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
@@ -84,7 +106,9 @@ modrinth {
     projectId = providers.gradleProperty('modrinth_project').orElse(mod_id)
     versionNumber = "${mod_version}+mc${minecraft_version}-fabric"
     versionName = "SmartMobs ${mod_version} - Fabric/Quilt ${minecraft_version}"
-    versionType = 'release'
+    // Beta for the whole 26.2 line: it is a brand new Minecraft, and this jar is built
+    // through the identity-mapping workaround explained above.
+    versionType = 'beta'
     uploadFile = tasks.remapJar
     gameVersions = [minecraft_version]
     // One file serves both loaders: Quilt Loader runs the Fabric build.

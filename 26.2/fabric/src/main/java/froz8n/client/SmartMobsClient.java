@@ -5,7 +5,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.model.HumanoidModel;
@@ -30,16 +30,16 @@ public final class SmartMobsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        EntityModelLayerRegistry.registerModelLayer(MiningHelmetModel.LAYER, MiningHelmetModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(GardenHatModel.LAYER, GardenHatModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(CardboardBoxModel.LAYER, CardboardBoxModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(BruteHelmModel.LAYER, BruteHelmModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(RunnerCapModel.LAYER, RunnerCapModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(ScreamerHornsModel.LAYER, ScreamerHornsModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(ThiefHoodModel.LAYER, ThiefHoodModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(MedicCapModel.LAYER, MedicCapModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(SapperCapModel.LAYER, SapperCapModel::createLayer);
-        EntityModelLayerRegistry.registerModelLayer(GhostVeilModel.LAYER, GhostVeilModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(MiningHelmetModel.LAYER, MiningHelmetModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(GardenHatModel.LAYER, GardenHatModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(CardboardBoxModel.LAYER, CardboardBoxModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(BruteHelmModel.LAYER, BruteHelmModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(RunnerCapModel.LAYER, RunnerCapModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(ScreamerHornsModel.LAYER, ScreamerHornsModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(ThiefHoodModel.LAYER, ThiefHoodModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(MedicCapModel.LAYER, MedicCapModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(SapperCapModel.LAYER, SapperCapModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(GhostVeilModel.LAYER, GhostVeilModel::createLayer);
 
         // Replaces the vanilla zombie renderer with the swimming-aware one.
         EntityRendererRegistry.register(EntityTypes.ZOMBIE, SwimmingZombieRenderer::new);

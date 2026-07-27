@@ -37,7 +37,7 @@ public final class PathVizNetwork {
 
     /** Declares the payload. Call once during mod initialisation. */
     public static void register() {
-        PayloadTypeRegistry.playS2C().register(Payload.TYPE, Payload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(Payload.TYPE, Payload.CODEC);
     }
 
     /** Sends the given plan to every player currently tracking the entity. */

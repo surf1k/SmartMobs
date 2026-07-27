@@ -7,7 +7,7 @@ through your walls, pillars up to your rooftop base, bridges gaps, parkours acro
 friends. Then it gives you three tools to fight back.
 
 Minecraft **1.21.11 / 1.21.1 / 1.20.1** · Fabric · Quilt · NeoForge · Forge
-Minecraft **26.2** · NeoForge (beta)
+Minecraft **26.2** · Fabric · Quilt · NeoForge (beta)
 
 ---
 
@@ -105,7 +105,7 @@ front of you for testing.
 ## Installation
 
 Pick the file that matches your Minecraft version *and* your loader — every download is named
-`smartmobs-<minecraft>-<loader>-<version>.jar`, so `smartmobs-1.21.1-forge-2.6.jar` is the Forge build for
+`smartmobs-<minecraft>-<loader>-<version>.jar`, so `smartmobs-1.21.1-forge-2.6.1.jar` is the Forge build for
 1.21.1. The **Fabric** build additionally requires [Fabric API](https://modrinth.com/mod/fabric-api); the
 NeoForge and Forge builds have no dependencies.
 
@@ -113,9 +113,9 @@ NeoForge and Forge builds have no dependencies.
 Fabric API alongside it. There is no separate Quilt build because there is nothing loader-specific to write:
 the Fabric jar *is* the Quilt jar.
 
-**On 26.2 there is only a NeoForge file, and it is marked beta** — not because the mod is unfinished there
-(it is the same mod, hats and all), but because the only NeoForge that exists for 26.2 is itself a beta.
-Fabric, Quilt and Forge on 26.2 are waiting on their build tooling.
+**The 26.2 files are marked beta.** Fabric (which Quilt takes too) and NeoForge are both there, and both
+are the same mod as every other version, hats and all — but 26.2 is a brand new Minecraft line and neither
+file has had a night of real play behind it. Forge on 26.2 is still waiting on its build tooling.
 
 Client **and** server both need the mod on a multiplayer world: the HUD, the knock-down animation and the
 root visuals are client-side, everything else runs on the server.
@@ -136,7 +136,7 @@ vanilla zombies only — modded mobs are left alone.
 даются три вещи, чтобы отбиваться.
 
 Minecraft **1.21.11 / 1.21.1 / 1.20.1** · Fabric · Quilt · NeoForge · Forge
-Minecraft **26.2** · NeoForge (бета)
+Minecraft **26.2** · Fabric · Quilt · NeoForge (бета)
 
 ### Обычных зомби больше нет
 
@@ -216,15 +216,15 @@ NeoForge и Forge): доли спавна шахтёров, садовых и п
 ### Установка
 
 Скачай файл под свою версию игры и загрузчик — имя файла всегда
-`smartmobs-<версия>-<загрузчик>-<номер>.jar`, то есть `smartmobs-1.21.1-forge-2.6.jar` — это сборка под
+`smartmobs-<версия>-<загрузчик>-<номер>.jar`, то есть `smartmobs-1.21.1-forge-2.6.1.jar` — это сборка под
 Forge для 1.21.1. Сборке под **Fabric** дополнительно нужен
 [Fabric API](https://modrinth.com/mod/fabric-api); NeoForge и Forge зависимостей не имеют.
 **Пользователям Quilt — файл Fabric**: Quilt Loader запускает его через слой совместимости, отдельной
 сборки нет.
 
-**Под 26.2 есть только файл NeoForge, и он помечен как бета** — не потому, что мод там недоделан (это тот
-же мод, со всеми шляпами), а потому, что единственный NeoForge для 26.2 сам бета. Fabric, Quilt и Forge на
-26.2 ждут своих сборочных инструментов.
+**Файлы под 26.2 помечены как бета.** Есть Fabric (его же берут на Quilt) и NeoForge, и это тот же мод,
+что и везде, со всеми шляпами — но 26.2 совсем новая линейка, и ни один из этих файлов ещё не пережил
+настоящей ночи в игре. Forge под 26.2 всё ещё ждёт своих сборочных инструментов.
 
 Для мультиплеера мод нужен и на клиенте, и на сервере: HUD, анимация
 падения и визуал корней — клиентские, остальное считает сервер.

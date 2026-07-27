@@ -5,7 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,8 +19,6 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.ArmorMaterial;
@@ -96,25 +94,10 @@ public final class SmartMobs implements ModInitializer {
             BuiltInRegistries.MOB_EFFECT, Identifier.fromNamespaceAndPath(MODID, "zombie_disguise"),
             new froz8n.combat.ZombieDisguiseEffect(MobEffectCategory.BENEFICIAL, 0x71852A));
 
-    // Creates a new Block with the id "smartmobs:example_block", combining the namespace and path.
-    // Since MC 1.21.x every Block/Item requires its registry id to be set on the Properties
-    // (BlockBehaviour.Properties#setId / Item.Properties#setId), otherwise construction throws
-    // "id not set".
-    public static final Block EXAMPLE_BLOCK = registerBlock("example_block",
-            new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).setId(blockKey("example_block"))));
-    // Creates a new BlockItem with the id "smartmobs:example_block", combining the namespace and path
-    public static final Item EXAMPLE_BLOCK_ITEM = registerItem("example_block",
-            new BlockItem(EXAMPLE_BLOCK, new Item.Properties().setId(itemKey("example_block"))));
-
-    // Creates a new food item with the id "smartmobs:example_item", nutrition 1 and saturation 2
-    public static final Item EXAMPLE_ITEM = registerItem("example_item",
-            new Item(new Item.Properties().setId(itemKey("example_item")).food(new FoodProperties.Builder()
-                    .alwaysEdible().nutrition(1).saturationModifier(2f).build())));
-
     // Creates a creative tab with the id "smartmobs:equipment" holding every public mod item.
     public static final CreativeModeTab EQUIPMENT_TAB = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
             ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath(MODID, "equipment")),
-            FabricItemGroup.builder()
+            FabricCreativeModeTab.builder()
                     .title(net.minecraft.network.chat.Component.translatable("itemGroup." + MODID + ".equipment"))
                     .icon(() -> ZOMBIE_SERUM.getDefaultInstance())
                     .displayItems((parameters, output) -> {

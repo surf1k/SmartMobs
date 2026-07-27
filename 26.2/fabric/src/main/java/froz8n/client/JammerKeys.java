@@ -5,7 +5,7 @@ import froz8n.combat.SoundWaveNetwork;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -15,9 +15,9 @@ import net.minecraft.resources.Identifier;
 public final class JammerKeys {
     private static final KeyMapping.Category CATEGORY=KeyMapping.Category.register(
             Identifier.fromNamespaceAndPath(SmartMobs.MODID,"jammer"));
-    private static final KeyMapping DOWN=KeyBindingHelper.registerKeyBinding(
+    private static final KeyMapping DOWN=KeyMappingHelper.registerKeyMapping(
             new KeyMapping("key.smartmobs.jammer_down",264,CATEGORY));
-    private static final KeyMapping UP=KeyBindingHelper.registerKeyBinding(
+    private static final KeyMapping UP=KeyMappingHelper.registerKeyMapping(
             new KeyMapping("key.smartmobs.jammer_up",265,CATEGORY));
     private JammerKeys(){}
 

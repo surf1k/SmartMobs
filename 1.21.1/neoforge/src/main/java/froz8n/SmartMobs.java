@@ -9,10 +9,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -87,15 +85,6 @@ public final class SmartMobs {
                     .instabreak().sound(net.minecraft.world.level.block.SoundType.ROOTS)));
     public static final DeferredHolder<MobEffect, MobEffect> ZOMBIE_DISGUISE = MOB_EFFECTS.register("zombie_disguise",
             () -> new froz8n.combat.ZombieDisguiseEffect(MobEffectCategory.BENEFICIAL, 0x71852A));
-
-    public static final DeferredHolder<Block, Block> EXAMPLE_BLOCK = BLOCKS.register("example_block",
-            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
-    public static final DeferredHolder<Item, Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block",
-            () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
-
-    public static final DeferredHolder<Item, Item> EXAMPLE_ITEM = ITEMS.register("example_item",
-            () -> new Item(new Item.Properties().food(new FoodProperties.Builder()
-                    .alwaysEdible().nutrition(1).saturationModifier(2f).build())));
 
     // Creates a creative tab with the id "smartmobs:equipment" holding every public mod item.
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EQUIPMENT_TAB =

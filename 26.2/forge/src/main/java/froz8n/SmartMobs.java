@@ -9,8 +9,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -104,21 +102,6 @@ public final class SmartMobs {
                     .instabreak().sound(net.minecraft.world.level.block.SoundType.ROOTS)));
     public static final RegistryObject<MobEffect> ZOMBIE_DISGUISE = MOB_EFFECTS.register("zombie_disguise",
             () -> new froz8n.combat.ZombieDisguiseEffect(MobEffectCategory.BENEFICIAL, 0x71852A));
-
-    // Creates a new Block with the id "smartmobs:example_block", combining the namespace and path.
-    // Since MC 1.21.x every Block/Item requires its registry id to be set on the Properties
-    // (BlockBehaviour.Properties#setId / Item.Properties#setId), otherwise construction throws
-    // "id not set". DeferredRegister does not do this automatically here, so we set it ourselves.
-    public static final RegistryObject<Block> EXAMPLE_BLOCK = BLOCKS.register("example_block",
-            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).setId(blockKey("example_block"))));
-    // Creates a new BlockItem with the id "smartmobs:example_block", combining the namespace and path
-    public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block",
-            () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties().setId(itemKey("example_block"))));
-
-    // Creates a new food item with the id "smartmobs:example_id", nutrition 1 and saturation 2
-    public static final RegistryObject<Item> EXAMPLE_ITEM = ITEMS.register("example_item",
-            () -> new Item(new Item.Properties().setId(itemKey("example_item")).food(new FoodProperties.Builder()
-                    .alwaysEdible().nutrition(1).saturationModifier(2f).build())));
 
     // Creates a creative tab with the id "smartmobs:example_tab" for the example item, that is placed after the combat tab
     public static final RegistryObject<CreativeModeTab> EQUIPMENT_TAB = CREATIVE_MODE_TABS.register("equipment", () -> CreativeModeTab.builder()
@@ -226,7 +209,6 @@ public final class SmartMobs {
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityTypes.ZOMBIE, froz8n.client.SwimmingZombieRenderer::new);
     }
-
 
     /**
      * A mob-only helmet: its own equipment asset, its own model, and no repair recipe worth
