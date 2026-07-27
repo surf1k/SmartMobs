@@ -92,7 +92,7 @@ modrinth {
         required.project 'fabric-api'
     }
     // The page body is owned by the 1.21.11 Fabric project; other lines must not rewrite it.
-    changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').text : ''
+    changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').getText('UTF-8') : ''
 }
 
 tasks.named('jar', Jar).configure {

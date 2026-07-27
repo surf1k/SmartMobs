@@ -91,8 +91,8 @@ modrinth {
         required.project 'fabric-api'
     }
     // Only this project syncs the page body, so the text is written once per release.
-    syncBodyFrom = file('../MODRINTH.md').text
-    changelog = file('../CHANGELOG.md').exists() ? file('../CHANGELOG.md').text : ''
+    syncBodyFrom = file('../MODRINTH.md').getText('UTF-8')
+    changelog = file('../CHANGELOG.md').exists() ? file('../CHANGELOG.md').getText('UTF-8') : ''
 }
 
 tasks.named('jar', Jar).configure {
