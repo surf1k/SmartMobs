@@ -1,7 +1,14 @@
 {
+  "item.smartmobs.brute_helm": "Brute's Riveted Helm",
+  "item.smartmobs.ghost_veil": "Ghost's Veil",
+  "item.smartmobs.medic_cap": "Medic's Cap",
+  "item.smartmobs.runner_cap": "Runner's Cap",
+  "item.smartmobs.sapper_cap": "Sapper's Fuse Cap",
+  "item.smartmobs.screamer_horns": "Screamer's Horns",
+  "item.smartmobs.thief_hood": "Thief's Hood",
   "key.categories.smartmobs.jammer": "SmartMobs: Suppressor",
-  "key.smartmobs.jammer_down": "Select stun mode",
-  "key.smartmobs.jammer_up": "Select panic mode",
+  "key.smartmobs.jammer_down": "Select panic mode",
+  "key.smartmobs.jammer_up": "Select stun mode",
   "item.smartmobs.cardboard_box": "Cardboard Box",
   "item.smartmobs.mining_helmet": "Mining Helmet",
   "item.smartmobs.garden_hat": "Garden Straw Hat",
@@ -14,15 +21,15 @@
   "itemGroup.smartmobs.equipment": "SmartMobs: Survival",
   "item.smartmobs.sound_jammer.desc.1": "Creates a moving field with a 5-block radius",
   "item.smartmobs.sound_jammer.desc.2": "Stuns zombies caught in the signal",
-  "item.smartmobs.sound_jammer.desc.3": "Duration: 3s  •  Cooldown: 30s",
-  "item.smartmobs.sound_jammer.cooldown": "Suppressor recharging: %s s"
-  ,"item.smartmobs.sound_jammer.mode.down": "Mode: DOWN — stun"
-  ,"item.smartmobs.sound_jammer.mode.up": "Mode: UP — disorient"
-  ,"hud.smartmobs.jammer.title": "ACOUSTIC SUPPRESSOR"
-  ,"hud.smartmobs.jammer.stun": "STUN"
-  ,"hud.smartmobs.jammer.stun_info": "5 blocks • knockdown • 30 sec"
-  ,"hud.smartmobs.jammer.fear": "PANIC"
-  ,"hud.smartmobs.jammer.fear_info": "10 blocks • flee • 45 sec"
-  ,"hud.smartmobs.jammer.ready": "READY"
-  ,"hud.smartmobs.jammer.use": "RMB — USE SELECTED MODE"
+  "item.smartmobs.sound_jammer.desc.3": "Duration: 3s  •  Cooldown: 20s",
+  "item.smartmobs.sound_jammer.cooldown": "Suppressor recharging: %s s",
+  "item.smartmobs.sound_jammer.mode.down": "Mode: DOWN — stun",
+  "item.smartmobs.sound_jammer.mode.up": "Mode: UP — disorient",
+  "hud.smartmobs.jammer.title": "ACOUSTIC SUPPRESSOR",
+  "hud.smartmobs.jammer.stun": "STUN",
+  "hud.smartmobs.jammer.stun_info": "5 blocks • knockdown • 20 sec",
+  "hud.smartmobs.jammer.fear": "PANIC",
+  "hud.smartmobs.jammer.fear_info": "10 blocks • flee • 30 sec",
+  "hud.smartmobs.jammer.ready": "READY",
+  "hud.smartmobs.jammer.use": "RMB — USE SELECTED MODE"
 }

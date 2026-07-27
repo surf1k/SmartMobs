@@ -9,7 +9,8 @@ group = mod_group_id
 version = mod_version
 
 base {
-    archivesName = mod_id
+    // Self-describing download: smartmobs-<mc>-neoforge-<version>.jar
+    archivesName = "${mod_id}-${minecraft_version}-neoforge"
 }
 
 java {
@@ -83,7 +84,7 @@ modrinth {
     uploadFile = tasks.jar
     gameVersions = [minecraft_version]
     loaders = ['neoforge']
-    changelog = file('../CHANGELOG.md').exists() ? file('../CHANGELOG.md').text : ''
+    changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').text : ''
 }
 
 tasks.named('jar', Jar).configure {

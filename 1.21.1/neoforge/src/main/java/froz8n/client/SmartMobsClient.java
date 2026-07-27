@@ -44,6 +44,13 @@ public final class SmartMobsClient {
         event.registerLayerDefinition(MiningHelmetModel.LAYER, MiningHelmetModel::createLayer);
         event.registerLayerDefinition(GardenHatModel.LAYER, GardenHatModel::createLayer);
         event.registerLayerDefinition(CardboardBoxModel.LAYER, CardboardBoxModel::createLayer);
+        event.registerLayerDefinition(BruteHelmModel.LAYER, BruteHelmModel::createLayer);
+        event.registerLayerDefinition(RunnerCapModel.LAYER, RunnerCapModel::createLayer);
+        event.registerLayerDefinition(ScreamerHornsModel.LAYER, ScreamerHornsModel::createLayer);
+        event.registerLayerDefinition(ThiefHoodModel.LAYER, ThiefHoodModel::createLayer);
+        event.registerLayerDefinition(MedicCapModel.LAYER, MedicCapModel::createLayer);
+        event.registerLayerDefinition(SapperCapModel.LAYER, SapperCapModel::createLayer);
+        event.registerLayerDefinition(GhostVeilModel.LAYER, GhostVeilModel::createLayer);
     }
 
     @SubscribeEvent
@@ -61,12 +68,19 @@ public final class SmartMobsClient {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(SmartMobs.MODID, "jammer_hud"), JammerHud::render);
     }
 
-    /** The custom head geometry for the three hats (Forge's IClientItemExtensions hook). */
+    /** The custom head geometry for every mod hat (Forge's IClientItemExtensions hook). */
     @SubscribeEvent
     static void registerClientExtensions(RegisterClientExtensionsEvent event) {
         registerHat(event, SmartMobs.MINING_HELMET.get(), MiningHelmetModel.LAYER, MiningHelmetModel::new);
         registerHat(event, SmartMobs.GARDEN_HAT.get(), GardenHatModel.LAYER, GardenHatModel::new);
         registerHat(event, SmartMobs.CARDBOARD_BOX.get(), CardboardBoxModel.LAYER, CardboardBoxModel::new);
+        registerHat(event, SmartMobs.BRUTE_HELM.get(), BruteHelmModel.LAYER, BruteHelmModel::new);
+        registerHat(event, SmartMobs.RUNNER_CAP.get(), RunnerCapModel.LAYER, RunnerCapModel::new);
+        registerHat(event, SmartMobs.SCREAMER_HORNS.get(), ScreamerHornsModel.LAYER, ScreamerHornsModel::new);
+        registerHat(event, SmartMobs.THIEF_HOOD.get(), ThiefHoodModel.LAYER, ThiefHoodModel::new);
+        registerHat(event, SmartMobs.MEDIC_CAP.get(), MedicCapModel.LAYER, MedicCapModel::new);
+        registerHat(event, SmartMobs.SAPPER_CAP.get(), SapperCapModel.LAYER, SapperCapModel::new);
+        registerHat(event, SmartMobs.GHOST_VEIL.get(), GhostVeilModel.LAYER, GhostVeilModel::new);
     }
 
     private static void registerHat(RegisterClientExtensionsEvent event, Item item, ModelLayerLocation layer,

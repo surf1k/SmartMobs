@@ -73,6 +73,16 @@ public final class SmartMobs implements ModInitializer {
             new Item(new Item.Properties().setId(itemKey("cardboard_box")).durability(6)
                     .humanoidArmor(new ArmorMaterial(3, Map.of(ArmorType.HELMET, 0), 1, SoundEvents.ARMOR_EQUIP_LEATHER,
                             0, 0, ItemTags.REPAIRS_LEATHER_ARMOR, CARDBOARD_BOX_ASSET), ArmorType.HELMET)));
+    // One hat per breed. They are ordinary helmet items so vanilla armour rendering does
+    // the work; the geometry and texture that make each one recognisable are registered
+    // client-side in froz8n.client.SmartMobsClient.
+    public static final Item BRUTE_HELM = breedHat("brute_helm", 3);
+    public static final Item RUNNER_CAP = breedHat("runner_cap", 1);
+    public static final Item SCREAMER_HORNS = breedHat("screamer_horns", 1);
+    public static final Item THIEF_HOOD = breedHat("thief_hood", 1);
+    public static final Item MEDIC_CAP = breedHat("medic_cap", 1);
+    public static final Item SAPPER_CAP = breedHat("sapper_cap", 1);
+    public static final Item GHOST_VEIL = breedHat("ghost_veil", 0);
     public static final Item SOUND_JAMMER = registerItem("sound_jammer",
             new froz8n.combat.SoundJammerItem(new Item.Properties().setId(itemKey("sound_jammer")).stacksTo(1)));
     public static final Item ZOMBIE_SERUM = registerItem("zombie_serum",
@@ -112,6 +122,13 @@ public final class SmartMobs implements ModInitializer {
                         output.accept(MINING_HELMET);
                         output.accept(GARDEN_HAT);
                         output.accept(CARDBOARD_BOX);
+                        output.accept(BRUTE_HELM);
+                        output.accept(RUNNER_CAP);
+                        output.accept(SCREAMER_HORNS);
+                        output.accept(THIEF_HOOD);
+                        output.accept(MEDIC_CAP);
+                        output.accept(SAPPER_CAP);
+                        output.accept(GHOST_VEIL);
                     }).build());
 
     @Override
@@ -126,7 +143,12 @@ public final class SmartMobs implements ModInitializer {
         // Register the SmartMobs gameplay handlers (command, AI, temp blocks).
         froz8n.smart.SmartMobsEvents.register();
 
-        // A modest nudge, not the horde the old weight of 80 produced.
+        // Zombies are the whole mod, so they get a bigger share of the monster budget:
+        // vanilla weights them 95 against roughly 410 on land, this takes them to about a
+        // third of everything that spawns. The mob cap is untouched, only the mix.
+        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld(), MobCategory.MONSTER,
+                EntityType.ZOMBIE, 60, 2, 4);
+        // A smaller nudge in the Nether, not the horde the old weight of 80 produced.
         BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(), MobCategory.MONSTER,
                 EntityType.ZOMBIE, 25, 2, 3);
 
@@ -148,6 +170,30 @@ public final class SmartMobs implements ModInitializer {
     public static Block graspingRoots() { return GRASPING_ROOTS; }
 
     public static Holder<MobEffect> zombieDisguise() { return ZOMBIE_DISGUISE; }
+
+    /** A mob-only helmet: its own asset, its own model, and no repair recipe worth having. */
+    private static Item breedHat(String path, int defense) {
+        ResourceKey<EquipmentAsset> asset = ResourceKey.create(
+                EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MODID, path));
+        return registerItem(path, new Item(new Item.Properties().setId(itemKey(path))
+                .humanoidArmor(new ArmorMaterial(5, Map.of(ArmorType.HELMET, defense), 3,
+                        SoundEvents.ARMOR_EQUIP_LEATHER, 0, 0, ItemTags.REPAIRS_LEATHER_ARMOR, asset),
+                        ArmorType.HELMET)));
+    }
+
+    /** The hat a given breed wears, or null for a breed that goes bare-headed. */
+    public static Item breedHatFor(String breed) {
+        return switch (breed) {
+            case "brute" -> BRUTE_HELM;
+            case "runner" -> RUNNER_CAP;
+            case "screamer" -> SCREAMER_HORNS;
+            case "thief" -> THIEF_HOOD;
+            case "medic" -> MEDIC_CAP;
+            case "sapper" -> SAPPER_CAP;
+            case "ghost" -> GHOST_VEIL;
+            default -> null;
+        };
+    }
 
     private static <T extends Item> T registerItem(String path, T item) {
         return Registry.register(BuiltInRegistries.ITEM, itemKey(path), item);

@@ -18,14 +18,14 @@ public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.DoubleValue SMART_CHANCE = BUILDER
-            .comment("Share of adult zombies that spawn as helmet-wearing miners")
-            .defineInRange("smartChance", 0.12, 0.0, 1.0);
+            .comment("Share of adult zombies that spawn as wall-digging miners")
+            .defineInRange("minerShare", 0.20, 0.0, 1.0);
     private static final ModConfigSpec.DoubleValue GARDEN_CHANCE = BUILDER
             .comment("Share of adult zombies that spawn as straw-hat garden zombies")
-            .defineInRange("gardenChance", 0.06, 0.0, 1.0);
+            .defineInRange("gardenShare", 0.10, 0.0, 1.0);
     private static final ModConfigSpec.DoubleValue BREED_CHANCE = BUILDER
-            .comment("Chance for an ordinary zombie to roll one of the six lesser breeds")
-            .defineInRange("breedChance", 0.30, 0.0, 1.0);
+            .comment("Chance the remaining zombies roll a breed. 1.0 means no plain zombie ever spawns")
+            .defineInRange("breedShare", 1.00, 0.0, 1.0);
     private static final ModConfigSpec.DoubleValue DAY_MOVE_SPEED = BUILDER
             .comment("Miner movement speed by day. Vanilla zombies use 0.23, a sprinting player ~0.28")
             .defineInRange("dayMoveSpeed", 0.25, 0.05, 1.0);
@@ -48,14 +48,14 @@ public class Config {
             .comment("Whether mod zombies ignore daylight. They wear helmets, so on by default")
             .define("sunlightImmunity", true);
     private static final ModConfigSpec.BooleanValue ENABLE_BREEDS = BUILDER
-            .comment("Whether the six lesser breeds spawn at all")
+            .comment("Whether the seven lesser breeds spawn at all")
             .define("enableBreeds", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
-    public static double smartChance = 0.12;
-    public static double gardenChance = 0.06;
-    public static double breedChance = 0.30;
+    public static double smartChance = 0.20;
+    public static double gardenChance = 0.10;
+    public static double breedChance = 1.00;
     public static double dayMoveSpeed = 0.25;
     public static double nightMoveSpeed = 0.30;
     public static int detectionRange = 32;

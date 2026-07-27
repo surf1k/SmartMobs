@@ -9,7 +9,8 @@ group = mod_group_id
 version = mod_version
 
 base {
-    archivesName = mod_id
+    // Self-describing download: smartmobs-<mc>-neoforge-<version>.jar
+    archivesName = "${mod_id}-${minecraft_version}-neoforge"
 }
 
 java {

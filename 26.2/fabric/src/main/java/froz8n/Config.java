@@ -28,11 +28,11 @@ public final class Config {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /** Share of adult zombies that spawn as helmet-wearing miners. */
-    public static double smartChance = 0.12;
+    public static double smartChance = 0.20;
     /** Share of adult zombies that spawn as straw-hat garden zombies. */
-    public static double gardenChance = 0.06;
+    public static double gardenChance = 0.10;
     /** Chance for an ordinary zombie to roll one of the six lesser breeds. */
-    public static double breedChance = 0.30;
+    public static double breedChance = 1.00;
     /** Miner movement speed by day. Vanilla zombies use 0.23, a sprinting player ~0.28. */
     public static double dayMoveSpeed = 0.25;
     /** Miner movement speed at night (and always in the Nether). */
@@ -61,9 +61,9 @@ public final class Config {
         }
         try (Reader reader = Files.newBufferedReader(file)) {
             JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-            smartChance = clamp(getDouble(json, "smartChance", smartChance), 0.0, 1.0);
-            gardenChance = clamp(getDouble(json, "gardenChance", gardenChance), 0.0, 1.0);
-            breedChance = clamp(getDouble(json, "breedChance", breedChance), 0.0, 1.0);
+            smartChance = clamp(getDouble(json, "minerShare", smartChance), 0.0, 1.0);
+            gardenChance = clamp(getDouble(json, "gardenShare", gardenChance), 0.0, 1.0);
+            breedChance = clamp(getDouble(json, "breedShare", breedChance), 0.0, 1.0);
             dayMoveSpeed = clamp(getDouble(json, "dayMoveSpeed", dayMoveSpeed), 0.05, 1.0);
             nightMoveSpeed = clamp(getDouble(json, "nightMoveSpeed", nightMoveSpeed), 0.05, 1.0);
             detectionRange = (int) clamp(getInt(json, "detectionRange", detectionRange), 8, 128);
@@ -79,9 +79,9 @@ public final class Config {
 
     private static void save(Path file) {
         JsonObject json = new JsonObject();
-        json.addProperty("smartChance", smartChance);
-        json.addProperty("gardenChance", gardenChance);
-        json.addProperty("breedChance", breedChance);
+        json.addProperty("minerShare", smartChance);
+        json.addProperty("gardenShare", gardenChance);
+        json.addProperty("breedShare", breedChance);
         json.addProperty("dayMoveSpeed", dayMoveSpeed);
         json.addProperty("nightMoveSpeed", nightMoveSpeed);
         json.addProperty("detectionRange", detectionRange);

@@ -91,8 +91,7 @@ modrinth {
     dependencies {
         required.project 'fabric-api'
     }
-    // Only this project syncs the page body, so the text is written once per release.
-    syncBodyFrom = file('../../MODRINTH.md').text
+    // The page body is owned by the 1.21.11 Fabric project; other lines must not rewrite it.
     changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').text : ''
 }
 

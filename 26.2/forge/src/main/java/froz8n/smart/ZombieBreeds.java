@@ -22,9 +22,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * The six lesser zombie breeds. None of them can dig, build or outrun the player - they
- * are flavour and pressure, not a siege engine, and every one of them burns in daylight
- * because none carries a helmet.
+ * The seven lesser zombie breeds. None of them can dig, build or outrun the player - they
+ * are flavour and pressure, not a siege engine. Every one of them wears the mod helmet, so
+ * a modded night is obvious at a glance; the hand item says which breed you are looking at.
  *
  * <ul>
  *   <li><b>brute</b> - 30 hearts of meat, hits harder, shrugs off knockback, walks slowly.</li>
@@ -89,6 +89,10 @@ public final class ZombieBreeds {
 
     private static void apply(Zombie zombie, String breed) {
         PersistentData.of(zombie).putString(BREED_KEY, breed);
+        // Every breed has its own hat, so you can read the threat off its head before it
+        // reaches you. The ghost's veil is deliberately included: vanilla renders armour on
+        // invisible mobs, so the veil drifting through a wall is the only warning you get.
+        wearHat(zombie, breed);
         switch (breed) {
             case BRUTE -> {
                 setMaxHealth(zombie, 30.0);
@@ -297,6 +301,14 @@ public final class ZombieBreeds {
     public static boolean isFleeing(Zombie zombie) {
         return THIEF.equals(breedOf(zombie))
                 && PersistentData.of(zombie).getLongOr(THIEF_FLEE_UNTIL, 0L) > zombie.level().getGameTime();
+    }
+
+    private static void wearHat(Zombie zombie, String breed) {
+        net.minecraft.world.item.Item hat = froz8n.SmartMobs.breedHatFor(breed);
+        if (hat == null) return;
+        zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(hat));
+        // Low enough that a night of fighting does not bury the ground in hats.
+        zombie.setDropChance(EquipmentSlot.HEAD, 0.02F);
     }
 
     private static void hold(Zombie zombie, net.minecraft.world.item.Item item) {

@@ -1,6 +1,54 @@
-## 2.5.1 - back-ports
+## 2.6 - no more plain zombies
 
-Same mod, same balance, three more Minecraft versions.
+Minecraft 1.21.11, 1.21.1 and 1.20.1 on Fabric, Quilt, NeoForge and Forge.
+
+### Every zombie is a mod zombie now
+
+The old defaults left more than half of every night as ordinary vanilla zombies. That is gone:
+
+- **20%** miners, **10%** garden zombies, and the whole remaining **70%** rolls one of the seven breeds.
+  Nothing spawns plain any more.
+- Zombies also get a bigger share of the monster budget. Vanilla weights them 95 against roughly 410 on
+  land; the mod adds 60 more, so they go from about a quarter of what spawns at night to about a third.
+  The mob cap is untouched - the mix changed, not the total.
+
+### A hat per breed
+
+Every breed now wears its own headgear, so you can read what is coming at you before it arrives:
+
+| Breed | Hat |
+| --- | --- |
+| Brute | riveted iron pot helm with a nose guard |
+| Runner | peaked leather cap with a swept fin |
+| Screamer | bone skullcap with a pair of horns |
+| Thief | deep cloth hood |
+| Medic | white field cap with a red cross |
+| Sapper | olive cap with a lit fuse |
+| Ghost | pale veil with a trailing shroud |
+
+The ghost keeps its hat on purpose: vanilla draws armour on invisible mobs, so the veil drifting through a
+wall is the only warning you get. Miners still wear the mining helmet, garden zombies the straw hat.
+
+### Also fixed
+
+- The suppressor HUD and tooltip advertised 30 s and 45 s cooldowns; the item has actually recharged in
+  20 s and 30 s since 2.5. The text now says what the item does.
+- The two suppressor key bindings had no English names, so they showed up as raw ids in the Controls
+  screen. On the versions that did name them, the two were the wrong way round.
+
+### Read this if you are upgrading
+
+The three spawn-share settings were renamed - `smartChance`, `gardenChance` and `breedChance` are now
+`minerShare`, `gardenShare` and `breedShare`. That is deliberate: an existing config file would otherwise
+have kept the old numbers and none of the above would have happened to you. Your old values are ignored;
+retune the new keys if you want something other than the defaults.
+
+Downloads are named per version and loader now (`smartmobs-1.21.1-fabric-2.6.jar`), so two lines no longer
+land in your downloads folder under the same name.
+
+## 2.5 on older Minecraft
+
+Same mod, same version, same balance — now built for three Minecraft lines instead of one.
 
 | Minecraft | Fabric | Quilt | NeoForge | Forge |
 | --- | --- | --- | --- | --- |

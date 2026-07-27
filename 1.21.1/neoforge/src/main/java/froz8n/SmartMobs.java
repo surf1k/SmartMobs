@@ -67,6 +67,16 @@ public final class SmartMobs {
             () -> new ArmorItem(GARDEN_HAT_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final DeferredHolder<Item, Item> CARDBOARD_BOX = ITEMS.register("cardboard_box",
             () -> new ArmorItem(CARDBOARD_BOX_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties().durability(6)));
+    // One hat per breed. They are ordinary helmet items so vanilla armour rendering does
+    // the work; the geometry that makes each one recognisable is registered client-side in
+    // froz8n.client.SmartMobsClient, and the texture comes from each hat's own armour material.
+    public static final DeferredHolder<Item, Item> BRUTE_HELM = breedHat("brute_helm", 3);
+    public static final DeferredHolder<Item, Item> RUNNER_CAP = breedHat("runner_cap", 1);
+    public static final DeferredHolder<Item, Item> SCREAMER_HORNS = breedHat("screamer_horns", 1);
+    public static final DeferredHolder<Item, Item> THIEF_HOOD = breedHat("thief_hood", 1);
+    public static final DeferredHolder<Item, Item> MEDIC_CAP = breedHat("medic_cap", 1);
+    public static final DeferredHolder<Item, Item> SAPPER_CAP = breedHat("sapper_cap", 1);
+    public static final DeferredHolder<Item, Item> GHOST_VEIL = breedHat("ghost_veil", 0);
     public static final DeferredHolder<Item, Item> SOUND_JAMMER = ITEMS.register("sound_jammer",
             () -> new froz8n.combat.SoundJammerItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> ZOMBIE_SERUM = ITEMS.register("zombie_serum",
@@ -98,6 +108,13 @@ public final class SmartMobs {
                         output.accept(MINING_HELMET.get());
                         output.accept(GARDEN_HAT.get());
                         output.accept(CARDBOARD_BOX.get());
+                        output.accept(BRUTE_HELM.get());
+                        output.accept(RUNNER_CAP.get());
+                        output.accept(SCREAMER_HORNS.get());
+                        output.accept(THIEF_HOOD.get());
+                        output.accept(MEDIC_CAP.get());
+                        output.accept(SAPPER_CAP.get());
+                        output.accept(GHOST_VEIL.get());
                     }).build());
 
     public SmartMobs(IEventBus modEventBus, ModContainer modContainer) {
@@ -132,6 +149,27 @@ public final class SmartMobs {
         return ARMOR_MATERIALS.register(path, () -> new ArmorMaterial(
                 Map.of(ArmorItem.Type.HELMET, defense), enchantmentValue, equipSound, repair,
                 List.of(new ArmorMaterial.Layer(id)), 0.0F, 0.0F));
+    }
+
+    /** A mob-only helmet: its own armour material, its own model, and no repair recipe worth having. */
+    private static DeferredHolder<Item, Item> breedHat(String path, int defense) {
+        DeferredHolder<ArmorMaterial, ArmorMaterial> material = armorMaterial(
+                path, defense, 3, SoundEvents.ARMOR_EQUIP_LEATHER, () -> Ingredient.of(Items.LEATHER));
+        return ITEMS.register(path, () -> new ArmorItem(material, ArmorItem.Type.HELMET, new Item.Properties()));
+    }
+
+    /** The hat a given breed wears, or null for a breed that goes bare-headed. */
+    public static Item breedHatFor(String breed) {
+        return switch (breed) {
+            case "brute" -> BRUTE_HELM.get();
+            case "runner" -> RUNNER_CAP.get();
+            case "screamer" -> SCREAMER_HORNS.get();
+            case "thief" -> THIEF_HOOD.get();
+            case "medic" -> MEDIC_CAP.get();
+            case "sapper" -> SAPPER_CAP.get();
+            case "ghost" -> GHOST_VEIL.get();
+            default -> null;
+        };
     }
 
     // The gameplay code is shared verbatim with the Fabric tree, where these are plain

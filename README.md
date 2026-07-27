@@ -1,13 +1,15 @@
 # SmartMobs
 
 Zombies that plan a route, mine through walls, pillar, bridge, parkour and hunt in packs, seven lesser breeds
-that make an ordinary night interesting — plus three items to fight back with. Minecraft **1.21.11**, built
-for every current loader from one shared design.
+that make an ordinary night interesting — plus three items to fight back with. Minecraft **1.21.11**,
+**1.21.1** and **1.20.1**, built for every current loader from one shared design.
 
-Difficulty is tuned to be survivable and every number is config: miners are 12% of spawns (was 35%), they
-carry a plain pickaxe instead of an Efficiency V one,
-notice you at 32 blocks instead of 128 and no longer break nether portals unless you turn that back on. They
-still ignore daylight - they are wearing helmets - and there is still no block they cannot eventually mine.
+Since 2.6 no zombie spawns plain: **20%** are miners, **10%** garden zombies and the remaining **70%** roll
+one of the seven breeds, each wearing its own headgear so you can read what is coming at you. Difficulty is
+tuned to be survivable and every number is config: miners carry a plain pickaxe instead of an Efficiency V
+one, notice you at 32 blocks instead of 128 and no longer break nether portals unless you turn that back on.
+They still ignore daylight - they are wearing helmets - and there is still no block they cannot eventually
+mine.
 
 ![icon](branding/icon.png)
 
@@ -80,8 +82,9 @@ cd forge && ./gradlew build
 cd quilt && ./gradlew build
 ```
 
-Jars land in `<loader>/build/libs/`. They all carry the same file name, so copies renamed per loader
-(`smartmobs-1.21.11-2.4-fabric.jar` and friends) are collected in `dist/` for uploading.
+Jars land in `<loader>/build/libs/` already named per Minecraft version and loader
+(`smartmobs-1.21.11-fabric-2.6.jar` and friends), and copies of all of them are collected in `dist/` for
+uploading.
 
 ## Running and testing
 
@@ -161,9 +164,9 @@ NeoForge's `BlockEvent.BreakEvent` became `BreakBlockEvent`, and the HUD draws t
 
 | Folder | State |
 | --- | --- |
-| `26.2/neoforge` | **Builds.** NeoForge 26.2.0.35-beta, jar produced. |
+| `26.2/neoforge` | **Builds.** NeoForge 26.2.0.35-beta, jar produced. Carries the 2.6 spawn shares but not the breed hats yet — the loader edges for them are the only thing left to write. |
 | `26.2/forge` | Blocked upstream: MC 26.2 needs a Java 25 toolchain, which needs Gradle 9, and the newest ForgeGradle (6.0.54) still dies on Gradle 9 / class file 69. |
-| `26.2/fabric` | Blocked upstream: Loom 1.18-alpha still demands a mappings dependency, and `officialMojangMappings()` fails because Mojang publishes none for 26.2. |
+| `26.2/fabric` | Blocked upstream: Loom 1.18-alpha still demands a mappings dependency, and `officialMojangMappings()` fails because Mojang publishes none for 26.2. The sources are complete, breed hats included — only the build is stuck. |
 | `26.2/quilt` | Waits on the same Loom fix. |
 
 ## Licence

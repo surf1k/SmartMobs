@@ -9,7 +9,8 @@ group = mod_group_id
 version = mod_version
 
 base {
-    archivesName = mod_id
+    // Self-describing download: smartmobs-<mc>-fabric-<version>.jar
+    archivesName = "${mod_id}-${minecraft_version}-fabric"
 }
 
 java {
@@ -89,8 +90,7 @@ modrinth {
     dependencies {
         required.project 'fabric-api'
     }
-    // Only this project syncs the page body, so the text is written once per release.
-    syncBodyFrom = file('../../MODRINTH.md').text
+    // The page body is owned by the 1.21.11 Fabric project; back-ports must not rewrite it.
     changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').text : ''
 }
 

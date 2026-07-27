@@ -35,12 +35,26 @@ public final class SmartMobsClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(MiningHelmetModel.LAYER, MiningHelmetModel::createLayer);
         EntityModelLayerRegistry.registerModelLayer(GardenHatModel.LAYER, GardenHatModel::createLayer);
         EntityModelLayerRegistry.registerModelLayer(CardboardBoxModel.LAYER, CardboardBoxModel::createLayer);
+        EntityModelLayerRegistry.registerModelLayer(BruteHelmModel.LAYER, BruteHelmModel::createLayer);
+        EntityModelLayerRegistry.registerModelLayer(RunnerCapModel.LAYER, RunnerCapModel::createLayer);
+        EntityModelLayerRegistry.registerModelLayer(ScreamerHornsModel.LAYER, ScreamerHornsModel::createLayer);
+        EntityModelLayerRegistry.registerModelLayer(ThiefHoodModel.LAYER, ThiefHoodModel::createLayer);
+        EntityModelLayerRegistry.registerModelLayer(MedicCapModel.LAYER, MedicCapModel::createLayer);
+        EntityModelLayerRegistry.registerModelLayer(SapperCapModel.LAYER, SapperCapModel::createLayer);
+        EntityModelLayerRegistry.registerModelLayer(GhostVeilModel.LAYER, GhostVeilModel::createLayer);
 
         EntityRendererRegistry.register(EntityType.ZOMBIE, SwimmingZombieRenderer::new);
 
         registerHat(SmartMobs.MINING_HELMET, MiningHelmetModel.LAYER, MiningHelmetModel::new, "mining_helmet");
         registerHat(SmartMobs.GARDEN_HAT, GardenHatModel.LAYER, GardenHatModel::new, "garden_hat");
         registerHat(SmartMobs.CARDBOARD_BOX, CardboardBoxModel.LAYER, CardboardBoxModel::new, "cardboard_box");
+        registerHat(SmartMobs.BRUTE_HELM, BruteHelmModel.LAYER, BruteHelmModel::new, "brute_helm");
+        registerHat(SmartMobs.RUNNER_CAP, RunnerCapModel.LAYER, RunnerCapModel::new, "runner_cap");
+        registerHat(SmartMobs.SCREAMER_HORNS, ScreamerHornsModel.LAYER, ScreamerHornsModel::new, "screamer_horns");
+        registerHat(SmartMobs.THIEF_HOOD, ThiefHoodModel.LAYER, ThiefHoodModel::new, "thief_hood");
+        registerHat(SmartMobs.MEDIC_CAP, MedicCapModel.LAYER, MedicCapModel::new, "medic_cap");
+        registerHat(SmartMobs.SAPPER_CAP, SapperCapModel.LAYER, SapperCapModel::new, "sapper_cap");
+        registerHat(SmartMobs.GHOST_VEIL, GhostVeilModel.LAYER, GhostVeilModel::new, "ghost_veil");
 
         HudRenderCallback.EVENT.register(JammerHud::render);
 

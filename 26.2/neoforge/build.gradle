@@ -83,7 +83,7 @@ modrinth {
     uploadFile = tasks.jar
     gameVersions = [minecraft_version]
     loaders = ['neoforge']
-    changelog = file('../CHANGELOG.md').exists() ? file('../CHANGELOG.md').text : ''
+    changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').text : ''
 }
 
 tasks.named('jar', Jar).configure {

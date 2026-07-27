@@ -10,7 +10,8 @@ group = mod_group_id
 version = mod_version
 
 base {
-    archivesName = mod_id
+    // Self-describing download: smartmobs-<mc>-forge-<version>.jar
+    archivesName = "${mod_id}-${minecraft_version}-forge"
 }
 
 java {
@@ -181,7 +182,7 @@ modrinth {
     uploadFile = tasks.jar
     gameVersions = [minecraft_version]
     loaders = ['forge']
-    changelog = file('../CHANGELOG.md').exists() ? file('../CHANGELOG.md').text : ''
+    changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').text : ''
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
@@ -199,6 +200,9 @@ tasks.named('jar', Jar).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    // Minecraft 1.20.1 runs on Java 17. The toolchain is 21, so the target has to be
+    // pinned or the jar ships class file 65 and dies with UnsupportedClassVersionError.
+    options.release = 17
 }
 
 // Merge the resources and classes into the same directory.

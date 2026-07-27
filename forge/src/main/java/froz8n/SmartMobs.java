@@ -76,6 +76,23 @@ public final class SmartMobs {
             () -> new froz8n.client.CardboardBoxItem(new Item.Properties().setId(itemKey("cardboard_box")).durability(6)
                     .humanoidArmor(new ArmorMaterial(3,Map.of(ArmorType.HELMET,0),1,SoundEvents.ARMOR_EQUIP_LEATHER,
                             0,0,ItemTags.REPAIRS_LEATHER_ARMOR,CARDBOARD_BOX_ASSET),ArmorType.HELMET)));
+    // One hat per breed. They are ordinary helmet items so vanilla armour rendering does
+    // the work; the geometry and texture that make each one recognisable come from the
+    // matching froz8n.client.*Item / *Model pair.
+    public static final RegistryObject<Item> BRUTE_HELM =
+            breedHat("brute_helm", 3, froz8n.client.BruteHelmItem::new);
+    public static final RegistryObject<Item> RUNNER_CAP =
+            breedHat("runner_cap", 1, froz8n.client.RunnerCapItem::new);
+    public static final RegistryObject<Item> SCREAMER_HORNS =
+            breedHat("screamer_horns", 1, froz8n.client.ScreamerHornsItem::new);
+    public static final RegistryObject<Item> THIEF_HOOD =
+            breedHat("thief_hood", 1, froz8n.client.ThiefHoodItem::new);
+    public static final RegistryObject<Item> MEDIC_CAP =
+            breedHat("medic_cap", 1, froz8n.client.MedicCapItem::new);
+    public static final RegistryObject<Item> SAPPER_CAP =
+            breedHat("sapper_cap", 1, froz8n.client.SapperCapItem::new);
+    public static final RegistryObject<Item> GHOST_VEIL =
+            breedHat("ghost_veil", 0, froz8n.client.GhostVeilItem::new);
     public static final RegistryObject<Item> SOUND_JAMMER = ITEMS.register("sound_jammer",
             () -> new froz8n.combat.SoundJammerItem(new Item.Properties().setId(itemKey("sound_jammer")).stacksTo(1)));
     public static final RegistryObject<Item> ZOMBIE_SERUM = ITEMS.register("zombie_serum",
@@ -113,6 +130,13 @@ public final class SmartMobs {
                 output.accept(MINING_HELMET.get());
                 output.accept(GARDEN_HAT.get());
                 output.accept(CARDBOARD_BOX.get());
+                output.accept(BRUTE_HELM.get());
+                output.accept(RUNNER_CAP.get());
+                output.accept(SCREAMER_HORNS.get());
+                output.accept(THIEF_HOOD.get());
+                output.accept(MEDIC_CAP.get());
+                output.accept(SAPPER_CAP.get());
+                output.accept(GHOST_VEIL.get());
             }).build());
 
     public SmartMobs(FMLJavaModLoadingContext context) {
@@ -128,6 +152,20 @@ public final class SmartMobs {
                 .addListener(froz8n.client.GardenHatModel::registerLayer);
         EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
                 .addListener(froz8n.client.CardboardBoxModel::registerLayer);
+        EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
+                .addListener(froz8n.client.BruteHelmModel::registerLayer);
+        EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
+                .addListener(froz8n.client.RunnerCapModel::registerLayer);
+        EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
+                .addListener(froz8n.client.ScreamerHornsModel::registerLayer);
+        EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
+                .addListener(froz8n.client.ThiefHoodModel::registerLayer);
+        EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
+                .addListener(froz8n.client.MedicCapModel::registerLayer);
+        EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
+                .addListener(froz8n.client.SapperCapModel::registerLayer);
+        EntityRenderersEvent.RegisterLayerDefinitions.getBus(modBusGroup)
+                .addListener(froz8n.client.GhostVeilModel::registerLayer);
         EntityRenderersEvent.RegisterRenderers.getBus(modBusGroup)
                 .addListener(SmartMobs::registerEntityRenderers);
         net.minecraftforge.client.event.AddGuiOverlayLayersEvent.getBus(modBusGroup)
@@ -186,6 +224,35 @@ public final class SmartMobs {
 
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityType.ZOMBIE, froz8n.client.SwimmingZombieRenderer::new);
+    }
+
+    /**
+     * A mob-only helmet: its own equipment asset, its own model, and no repair recipe worth
+     * having. The factory picks the froz8n.client.*Item subclass that carries the geometry,
+     * which is Forge's stand-in for Fabric's ArmorRenderer registration.
+     */
+    private static RegistryObject<Item> breedHat(String path, int defense,
+                                                 java.util.function.Function<Item.Properties, Item> factory) {
+        ResourceKey<EquipmentAsset> asset = ResourceKey.create(
+                EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MODID, path));
+        return ITEMS.register(path, () -> factory.apply(new Item.Properties().setId(itemKey(path))
+                .humanoidArmor(new ArmorMaterial(5, Map.of(ArmorType.HELMET, defense), 3,
+                        SoundEvents.ARMOR_EQUIP_LEATHER, 0, 0, ItemTags.REPAIRS_LEATHER_ARMOR, asset),
+                        ArmorType.HELMET)));
+    }
+
+    /** The hat a given breed wears, or null for a breed that goes bare-headed. */
+    public static net.minecraft.world.item.Item breedHatFor(String breed) {
+        return switch (breed) {
+            case "brute" -> BRUTE_HELM.get();
+            case "runner" -> RUNNER_CAP.get();
+            case "screamer" -> SCREAMER_HORNS.get();
+            case "thief" -> THIEF_HOOD.get();
+            case "medic" -> MEDIC_CAP.get();
+            case "sapper" -> SAPPER_CAP.get();
+            case "ghost" -> GHOST_VEIL.get();
+            default -> null;
+        };
     }
 
     // Builds the registry key required by BlockBehaviour.Properties#setId in MC 1.21.x.

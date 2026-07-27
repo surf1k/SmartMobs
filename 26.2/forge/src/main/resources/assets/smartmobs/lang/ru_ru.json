@@ -11,18 +11,18 @@
   "itemGroup.smartmobs.equipment": "SmartMobs: выживание",
   "item.smartmobs.sound_jammer.desc.1": "Создаёт движущееся поле радиусом 5 блоков",
   "item.smartmobs.sound_jammer.desc.2": "Оглушает зомби на время действия сигнала",
-  "item.smartmobs.sound_jammer.desc.3": "Действие: 3 сек.  •  Перезарядка: 30 сек.",
-  "item.smartmobs.sound_jammer.cooldown": "Подавитель перезаряжается: %s сек."
-  ,"item.smartmobs.sound_jammer.mode.down": "Режим: DOWN — оглушение"
-  ,"item.smartmobs.sound_jammer.mode.up": "Режим: UP — дезориентация"
-  ,"key.smartmobs.jammer_down": "Выбрать панику"
-  ,"key.smartmobs.jammer_up": "Выбрать оглушение"
-  ,"key.categories.smartmobs.jammer": "Акустический подавитель"
-  ,"hud.smartmobs.jammer.title": "ПОДАВИТЕЛЬ"
-  ,"hud.smartmobs.jammer.stun": "ОГЛУШЕНИЕ"
-  ,"hud.smartmobs.jammer.stun_info": "5 блоков • падение • 30 сек."
-  ,"hud.smartmobs.jammer.fear": "ПАНИКА"
-  ,"hud.smartmobs.jammer.fear_info": "10 блоков • бегство • 45 сек."
-  ,"hud.smartmobs.jammer.ready": "ГОТОВ"
-  ,"hud.smartmobs.jammer.use": "ПКМ — ПРИМЕНИТЬ ВЫБРАННЫЙ РЕЖИМ"
+  "item.smartmobs.sound_jammer.desc.3": "Действие: 3 сек.  •  Перезарядка: 20 сек.",
+  "item.smartmobs.sound_jammer.cooldown": "Подавитель перезаряжается: %s сек.",
+  "item.smartmobs.sound_jammer.mode.down": "Режим: DOWN — оглушение",
+  "item.smartmobs.sound_jammer.mode.up": "Режим: UP — дезориентация",
+  "key.smartmobs.jammer_down": "Выбрать панику",
+  "key.smartmobs.jammer_up": "Выбрать оглушение",
+  "key.categories.smartmobs.jammer": "SmartMobs: подавитель",
+  "hud.smartmobs.jammer.title": "ПОДАВИТЕЛЬ",
+  "hud.smartmobs.jammer.stun": "ОГЛУШЕНИЕ",
+  "hud.smartmobs.jammer.stun_info": "5 блоков • падение • 20 сек.",
+  "hud.smartmobs.jammer.fear": "ПАНИКА",
+  "hud.smartmobs.jammer.fear_info": "10 блоков • бегство • 30 сек.",
+  "hud.smartmobs.jammer.ready": "ГОТОВ",
+  "hud.smartmobs.jammer.use": "ПКМ — ПРИМЕНИТЬ ВЫБРАННЫЙ РЕЖИМ"
 }

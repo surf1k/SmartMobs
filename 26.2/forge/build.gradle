@@ -181,7 +181,7 @@ modrinth {
     uploadFile = tasks.jar
     gameVersions = [minecraft_version]
     loaders = ['forge']
-    changelog = file('../CHANGELOG.md').exists() ? file('../CHANGELOG.md').text : ''
+    changelog = file('../../CHANGELOG.md').exists() ? file('../../CHANGELOG.md').text : ''
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
