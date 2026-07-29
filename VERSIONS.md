@@ -3,7 +3,7 @@
 One codebase, four Minecraft lines. Pick the file that matches your game. Every download is named
 `smartmobs-<minecraft>-<loader>-<version>.jar`.
 
-Released as **2.6.1**:
+Released as **2.7**:
 
 | Minecraft | Fabric | Quilt | NeoForge | Forge |
 | --- | --- | --- | --- | --- |

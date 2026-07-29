@@ -162,6 +162,8 @@ public final class SmartZombieBrain {
             fresh.recheckTicks = Math.floorMod(z.getId(), WALK_PATH_RECHECK);
             return fresh;
         });
+        // The pickaxe is out for the whole hunt, not only while a block is coming down.
+        if (st.clutchPos == null) ensurePick(z, st);
         tickClutch(level, z, st);
         if (st.groupTicks-- <= 0) {
             updateGroupAssignment(level, z, target, st);
@@ -841,7 +843,9 @@ public final class SmartZombieBrain {
         ItemStack pick = z.getMainHandItem();
         float speed = pick.isEmpty() ? 1.0F : pick.getDestroySpeed(state);
         boolean correct = !pick.isEmpty() && pick.isCorrectToolForDrops(state);
-        return speed / hardness / (correct ? 10.0 : 20.0);
+        // digSpeed is the whole difficulty of a wall in one number: at 1.0 a wall buys real
+        // time, at the 3.0 default it buys a few seconds, and nothing stops the tunnel.
+        return froz8n.Config.digSpeed * speed / hardness / (correct ? 10.0 : 20.0);
     }
 
     private static void clearDig(Zombie z, ServerLevel level, BrainState st) {
@@ -858,15 +862,19 @@ public final class SmartZombieBrain {
     // ==================================================================
 
     private static void equipPickFor(Zombie z, BlockState state, ServerLevel level, BlockPos pos, BrainState st) {
-        ItemStack held = z.getMainHandItem();
-        if (st.holdingPick && held.is(Items.IRON_PICKAXE)) {
+        ensurePick(z, st);
+    }
+
+    /**
+     * A miner carries its pickaxe openly from the moment it has a target, not only while a
+     * block is coming down. You are meant to see it coming.
+     */
+    static void ensurePick(Zombie z, BrainState st) {
+        if (st.holdingPick && z.getMainHandItem().is(Items.IRON_PICKAXE)) {
             z.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
             return;
         }
-        // A plain iron pickaxe. The old Efficiency V one chewed through stone almost
-        // instantly, which is what made a wall pointless.
-        ItemStack tool=new ItemStack(Items.IRON_PICKAXE);
-        z.setItemSlot(EquipmentSlot.MAINHAND,tool);
+        z.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
         z.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
         st.holdingPick = true;
     }

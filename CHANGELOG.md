@@ -1,3 +1,42 @@
+## 2.7 - the hardcore tuning
+
+2.5 and 2.6 tuned this mod down until a wall worked and a sprint got you away. That was the wrong
+mod. 2.7 is the version it was supposed to be, on every Minecraft line at once.
+
+### They find you, and the wall is a formality
+
+- **They see you through anything, 256 blocks out.** Detection was 32 and the vanilla follow-range
+  attribute quietly undid even that the moment a wall got between you; both are fixed. There is no
+  hiding, only killing or leaving.
+- **The pickaxe is out.** A miner used to conjure one up only for the seconds it spent breaking a
+  block, so most of the time it looked like an ordinary zombie. It now carries the pickaxe openly
+  from the moment it has a target.
+- **A wall buys seconds, not minutes.** New `digSpeed` knob, default **3.0** - three times what a
+  plain iron pickaxe does. Obsidian is still slow. It is not safe.
+- **Nearly every zombie is one of ours**: **45%** miners, **15%** garden zombies, and the whole
+  remaining 40% rolls a breed. Nothing spawns plain.
+- **They are faster than you.** 0.29 by day and **0.34** at night against a sprinting player's ~0.28.
+  Running away is no longer a plan; it is a delay.
+- **Nether portal frames are broken on sight** by default now.
+
+### The sapper is a creeper
+
+It closes the distance, lights itself with a hiss and goes off in your face - 2.8 power, up from 1.8.
+Backing away does not put the fuse out. Killing one by hand is still possible and is now a very bad
+idea. It still does not touch a single block of terrain; that promise stands.
+
+### The rest of the breeds
+
+The screamer rallies from **32 blocks** with a 10-second cooldown instead of 16 blocks and 30
+seconds. The ghost drifts noticeably faster and hits for 4.5. The medic heals more, further out.
+
+### If you are upgrading
+
+Your old config would have quietly cancelled all of the above, so it is replaced. On Fabric and
+Quilt the JSON is rewritten the first time 2.7 starts; on NeoForge and Forge every key moved into a
+`[hardcore]` section, so the old flat keys are ignored. Every number above is still yours to turn
+down - the file just starts where the mod means it.
+
 ## 2.6.1 - Fabric and Quilt on 26.2, and two ghosts evicted
 
 **26.2 now has a Fabric file**, which Quilt Loader runs as well - so the newest Minecraft is down to

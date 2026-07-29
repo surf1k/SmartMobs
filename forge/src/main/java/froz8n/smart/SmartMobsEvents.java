@@ -156,6 +156,10 @@ public final class SmartMobsEvents {
                     var speed=zombie.getAttribute(Attributes.MOVEMENT_SPEED);
                     if(speed!=null) speed.setBaseValue(SmartMobWorldRules.isNightLike(zombie.level())
                             ?SmartZombieBrain.nightMoveSpeed():SmartZombieBrain.dayMoveSpeed());
+                    // Vanilla drops a target once it leaves follow range, which would undo
+                    // the detection radius the moment a wall got between you.
+                    var follow=zombie.getAttribute(Attributes.FOLLOW_RANGE);
+                    if(follow!=null) follow.setBaseValue(froz8n.Config.detectionRange);
                 }
             }
             syncSwimmingPose(zombie);

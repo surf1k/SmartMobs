@@ -46,6 +46,7 @@ public final class ZombieBreeds {
     private static final String SCREAM_COOLDOWN = "smartmobs_scream_cooldown";
     private static final String GHOST_NEXT_HIT = "smartmobs_ghost_next_hit";
     private static final String SAPPER_SPENT = "smartmobs_sapper_spent";
+    private static final String SAPPER_FUSE = "smartmobs_sapper_fuse";
 
     public static final String BRUTE = "brute";
     public static final String RUNNER = "runner";
@@ -57,16 +58,20 @@ public final class ZombieBreeds {
 
     private static final String[] ALL = {BRUTE, RUNNER, SCREAMER, THIEF, MEDIC, SAPPER, GHOST};
 
-    private static final int SCREAM_RANGE = 16;
-    private static final int SCREAM_RALLY_RANGE = 20;
-    private static final int SCREAM_COOLDOWN_TICKS = 600;
-    private static final int MEDIC_RANGE = 8;
-    private static final float MEDIC_HEAL = 2.0F;
+    private static final int SCREAM_RANGE = 32;
+    private static final int SCREAM_RALLY_RANGE = 40;
+    private static final int SCREAM_COOLDOWN_TICKS = 200;
+    private static final int MEDIC_RANGE = 12;
+    private static final float MEDIC_HEAL = 3.0F;
     private static final int THIEF_FLEE_TICKS = 600;
-    private static final float SAPPER_POWER = 1.8F;
-    private static final double GHOST_SPEED = 0.105;
-    private static final int GHOST_HIT_COOLDOWN = 25;
-    private static final float GHOST_DAMAGE = 3.0F;
+    private static final float SAPPER_POWER = 2.8F;
+    /** How close a sapper gets before it lights itself, in blocks. */
+    private static final double SAPPER_FUSE_RANGE = 3.5;
+    /** Fuse length once lit. A creeper burns 30 ticks; this one does not give you that long. */
+    private static final int SAPPER_FUSE_TICKS = 24;
+    private static final double GHOST_SPEED = 0.145;
+    private static final int GHOST_HIT_COOLDOWN = 18;
+    private static final float GHOST_DAMAGE = 4.5F;
 
     private ZombieBreeds() {
     }
@@ -146,6 +151,7 @@ public final class ZombieBreeds {
             case SCREAMER -> tickScreamer(level, zombie);
             case MEDIC -> tickMedic(level, zombie);
             case THIEF -> tickThief(level, zombie);
+            case SAPPER -> tickSapper(level, zombie);
             case GHOST -> tickGhost(level, zombie);
             default -> { }
         }
@@ -288,6 +294,41 @@ public final class ZombieBreeds {
         if (!SAPPER.equals(breedOf(zombie))) return;
         if (!(zombie.level() instanceof ServerLevel level)) return;
         if (amount < zombie.getHealth()) return;
+        detonate(level, zombie);
+    }
+
+    /**
+     * The sapper is a creeper in a cap: it closes the distance, lights itself and goes off in
+     * your face. Backing away does not put the fuse out - once lit it burns down wherever the
+     * sapper happens to be. Killing one by hand is still possible, and still a bad idea.
+     */
+    private static void tickSapper(ServerLevel level, Zombie zombie) {
+        if (PersistentData.of(zombie).getBooleanOr(SAPPER_SPENT, false)) return;
+        int fuse = PersistentData.of(zombie).getIntOr(SAPPER_FUSE, -1);
+        if (fuse < 0) {
+            if (!(zombie.getTarget() instanceof Player target) || target.isSpectator() || target.isCreative()
+                    || froz8n.combat.ZombieSerumSystem.isMasked(target)
+                    || zombie.distanceToSqr(target) > SAPPER_FUSE_RANGE * SAPPER_FUSE_RANGE) {
+                return;
+            }
+            PersistentData.of(zombie).putInt(SAPPER_FUSE, SAPPER_FUSE_TICKS);
+            level.playSound(null, zombie.blockPosition(), SoundEvents.CREEPER_PRIMED,
+                    SoundSource.HOSTILE, 1.4F, 0.8F);
+            zombie.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+                    SAPPER_FUSE_TICKS + 5, 0, false, false, true));
+            return;
+        }
+        level.sendParticles(ParticleTypes.SMOKE, zombie.getX(), zombie.getEyeY(), zombie.getZ(),
+                3, 0.18, 0.18, 0.18, 0.01);
+        if (fuse > 0) {
+            PersistentData.of(zombie).putInt(SAPPER_FUSE, fuse - 1);
+            return;
+        }
+        detonate(level, zombie);
+    }
+
+    /** One detonation per sapper, whether the fuse ran out or something killed it first. */
+    private static void detonate(ServerLevel level, Zombie zombie) {
         // The blast catches the sapper too, which would re-enter this handler; one detonation
         // per zombie, flagged before the explosion goes off.
         if (PersistentData.of(zombie).getBooleanOr(SAPPER_SPENT, false)) return;
@@ -295,6 +336,7 @@ public final class ZombieBreeds {
         // Damage-free terrain: the blast hurts whoever is standing next to it, nothing else.
         level.explode(zombie, zombie.getX(), zombie.getY(0.5), zombie.getZ(),
                 SAPPER_POWER, Level.ExplosionInteraction.NONE);
+        zombie.discard();
     }
 
     /** @return {@code true} while a thief is running away with something of yours. */

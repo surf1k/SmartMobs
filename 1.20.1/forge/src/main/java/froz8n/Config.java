@@ -8,9 +8,9 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 /**
  * Every knob that decides how hard the mod is.
  *
- * <p>The defaults are the playable tuning: special zombies are a minority, none of them
- * outruns a sprinting player, they notice you at a normal render distance rather than
- * across the map, and they cannot chew through obsidian.
+ * <p>The defaults are the hardcore tuning: most of what spawns at night is a miner or a
+ * garden zombie, they outrun you, they find you through any wall within 256 blocks and a
+ * wall only buys seconds. Turn the numbers down here if that is not what you wanted.
  */
 @Mod.EventBusSubscriber(modid = SmartMobs.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
@@ -19,49 +19,53 @@ public class Config {
 
     private static final ForgeConfigSpec.DoubleValue SMART_CHANCE = BUILDER
             .comment("Share of adult zombies that spawn as wall-digging miners")
-            .defineInRange("minerShare", 0.20, 0.0, 1.0);
+            .defineInRange("hardcore.minerShare", 0.45, 0.0, 1.0);
     private static final ForgeConfigSpec.DoubleValue GARDEN_CHANCE = BUILDER
             .comment("Share of adult zombies that spawn as straw-hat garden zombies")
-            .defineInRange("gardenShare", 0.10, 0.0, 1.0);
+            .defineInRange("hardcore.gardenShare", 0.15, 0.0, 1.0);
     private static final ForgeConfigSpec.DoubleValue BREED_CHANCE = BUILDER
             .comment("Chance the remaining zombies roll a breed. 1.0 means no plain zombie ever spawns")
-            .defineInRange("breedShare", 1.00, 0.0, 1.0);
+            .defineInRange("hardcore.breedShare", 1.00, 0.0, 1.0);
     private static final ForgeConfigSpec.DoubleValue DAY_MOVE_SPEED = BUILDER
             .comment("Miner movement speed by day. Vanilla zombies use 0.23, a sprinting player ~0.28")
-            .defineInRange("dayMoveSpeed", 0.25, 0.05, 1.0);
+            .defineInRange("hardcore.dayMoveSpeed", 0.29, 0.05, 1.0);
     private static final ForgeConfigSpec.DoubleValue NIGHT_MOVE_SPEED = BUILDER
             .comment("Miner movement speed at night, and always in the Nether")
-            .defineInRange("nightMoveSpeed", 0.30, 0.05, 1.0);
+            .defineInRange("hardcore.nightMoveSpeed", 0.34, 0.05, 1.0);
     private static final ForgeConfigSpec.IntValue DETECTION_RANGE = BUILDER
             .comment("How far a miner or garden zombie notices a player, in blocks")
-            .defineInRange("detectionRange", 32, 8, 128);
+            .defineInRange("hardcore.detectionRange", 256, 8, 512);
     private static final ForgeConfigSpec.BooleanValue ALLOW_DIGGING = BUILDER
             .comment("Whether miners may tunnel through blocks at all")
-            .define("allowDigging", true);
+            .define("hardcore.allowDigging", true);
+    private static final ForgeConfigSpec.DoubleValue DIG_SPEED = BUILDER
+            .comment("How fast a miner chews through a block. 1.0 is a plain iron pickaxe")
+            .defineInRange("hardcore.digSpeed", 3.0, 0.1, 20.0);
     private static final ForgeConfigSpec.DoubleValue MAX_DIG_HARDNESS = BUILDER
             .comment("Hardness ceiling for mining. Negative means no ceiling, which is the default")
-            .defineInRange("maxDigHardness", -1.0, -1.0, 100.0);
+            .defineInRange("hardcore.maxDigHardness", -1.0, -1.0, 100.0);
     private static final ForgeConfigSpec.BooleanValue BREAK_PORTALS = BUILDER
             .comment("Whether miners break nether portal frames they can see")
-            .define("breakPortals", false);
+            .define("hardcore.breakPortals", true);
     private static final ForgeConfigSpec.BooleanValue SUNLIGHT_IMMUNITY = BUILDER
             .comment("Whether mod zombies ignore daylight. They wear helmets, so on by default")
-            .define("sunlightImmunity", true);
+            .define("hardcore.sunlightImmunity", true);
     private static final ForgeConfigSpec.BooleanValue ENABLE_BREEDS = BUILDER
             .comment("Whether the seven lesser breeds spawn at all")
-            .define("enableBreeds", true);
+            .define("hardcore.enableBreeds", true);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    public static double smartChance = 0.20;
-    public static double gardenChance = 0.10;
+    public static double smartChance = 0.45;
+    public static double gardenChance = 0.15;
     public static double breedChance = 1.00;
-    public static double dayMoveSpeed = 0.25;
-    public static double nightMoveSpeed = 0.30;
-    public static int detectionRange = 32;
+    public static double dayMoveSpeed = 0.29;
+    public static double nightMoveSpeed = 0.34;
+    public static int detectionRange = 256;
     public static boolean allowDigging = true;
+    public static double digSpeed = 3.0;
     public static double maxDigHardness = -1.0;
-    public static boolean breakPortals = false;
+    public static boolean breakPortals = true;
     public static boolean sunlightImmunity = true;
     public static boolean enableBreeds = true;
 
@@ -74,6 +78,7 @@ public class Config {
         nightMoveSpeed = NIGHT_MOVE_SPEED.get();
         detectionRange = DETECTION_RANGE.get();
         allowDigging = ALLOW_DIGGING.get();
+        digSpeed = DIG_SPEED.get();
         maxDigHardness = MAX_DIG_HARDNESS.get();
         breakPortals = BREAK_PORTALS.get();
         sunlightImmunity = SUNLIGHT_IMMUNITY.get();

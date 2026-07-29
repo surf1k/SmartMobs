@@ -5,12 +5,12 @@ that make an ordinary night interesting — plus three items to fight back with.
 **1.21.1** and **1.20.1** on every current loader, and **26.2** on Fabric, Quilt and NeoForge, all from
 one shared design.
 
-Since 2.6 no zombie spawns plain: **20%** are miners, **10%** garden zombies and the remaining **70%** roll
-one of the seven breeds, each wearing its own headgear so you can read what is coming at you. Difficulty is
-tuned to be survivable and every number is config: miners carry a plain pickaxe instead of an Efficiency V
-one, notice you at 32 blocks instead of 128 and no longer break nether portals unless you turn that back on.
-They still ignore daylight - they are wearing helmets - and there is still no block they cannot eventually
-mine.
+Nothing spawns plain and 2.7 is tuned to be brutal: **45%** miners, **15%** garden zombies and the rest
+rolling one of the seven breeds, each wearing its own headgear so you can read what is coming at you.
+Miners carry the pickaxe openly, know where you are from **256 blocks through solid rock**, dig three times
+faster than a plain iron pickaxe, outrun a sprinting player at night and break nether portal frames on
+sight. The sapper is a creeper: it walks up, lights itself and detonates. Every one of those numbers is in
+the config for whoever wants the mod back the way 2.6 had it.
 
 ![icon](branding/icon.png)
 
@@ -84,7 +84,7 @@ cd quilt && ./gradlew build
 ```
 
 Jars land in `<loader>/build/libs/` already named per Minecraft version and loader
-(`smartmobs-1.21.11-fabric-2.6.1.jar` and friends), and copies of all of them are collected in `dist/` for
+(`smartmobs-1.21.11-fabric-2.7.jar` and friends), and copies of all of them are collected in `dist/` for
 uploading.
 
 ## Publishing
@@ -96,7 +96,7 @@ from each loader folder with `MODRINTH_TOKEN` in the environment:
 cd fabric && ./gradlew modrinth
 ```
 
-That uploads one file as its own Modrinth version (`2.6.1+mc1.21.11-fabric` and friends); the Fabric file is
+That uploads one file as its own Modrinth version (`2.7+mc1.21.11-fabric` and friends); the Fabric file is
 tagged for Quilt as well. It does **not** touch the project description — the page body is a separate task
 that only the 1.21.11 Fabric project owns, so the text is written once per release:
 
